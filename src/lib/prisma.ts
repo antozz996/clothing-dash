@@ -6,12 +6,6 @@ const globalForPrisma = globalThis as unknown as {
 
 const createPrismaClient = () => {
   return new PrismaClient({ 
-    // Correzione per Prisma 7: usiamo l'oggetto datasources
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL,
-      },
-    },
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   })
 }

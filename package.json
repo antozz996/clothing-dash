@@ -11,7 +11,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-better-sqlite3": "^7.7.0",
-    "@prisma/client": "^7.7.0",
+    "@prisma/client": "^6.2.1",
     "@react-pdf/renderer": "^4.5.1",
     "better-sqlite3": "^12.9.0",
     "clsx": "^2.1.1",
@@ -19,7 +19,7 @@
     "lucide-react": "^1.8.0",
     "next": "14.2.33",
     "next-cloudinary": "^6.17.5",
-    "prisma": "^7.7.0",
+    "prisma": "^6.2.1",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.72.1",
