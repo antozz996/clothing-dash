@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { CldUploadWidget } from 'next-cloudinary'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -91,6 +92,12 @@ export default function ProdottoForm({ params }: { params?: { id?: string } }) {
       console.error('Error saving prodotto:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleUpload = (result: any) => {
+    if (result.event === 'success') {
+      setValue('fotoUrl', result.info.secure_url)
     }
   }
 
@@ -284,20 +291,69 @@ export default function ProdottoForm({ params }: { params?: { id?: string } }) {
           </div>
           
           <div className="space-y-4">
-            <div className="space-y-1.5 font-inter">
-              <label className="text-xs font-bold text-slate-500 ml-1">URL Immagine (Cloudinary / Esterno)</label>
-              <input
-                {...register('fotoUrl')}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white transition-all focus:border-indigo-500 text-sm font-inter"
-                placeholder="https://res.cloudinary.com/..."
-              />
-            </div>
-            
-            {watch('fotoUrl') && (
-              <div className="mt-4 border border-slate-200 p-2 rounded-2xl w-40 animate-scale-in">
-                <img src={watch('fotoUrl')} alt="Anteprima" className="w-full h-40 object-cover rounded-xl shadow-inner" />
+            {!watch('fotoUrl') ? (
+              <CldUploadWidget 
+                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                onSuccess={handleUpload}
+                options={{
+                  maxFiles: 1,
+                  clientAllowedFormats: ["jpg", "png", "jpeg", "webp"],
+                  styles: {
+                    palette: {
+                      window: "#FFFFFF",
+                      windowBorder: "#E2E8F0",
+                      tabIcon: "#4F46E5",
+                      menuIcons: "#5A616A",
+                      textDark: "#000000",
+                      textLight: "#FFFFFF",
+                      link: "#4F46E5",
+                      action: "#4F46E5",
+                      inactiveTabIcon: "#94A3B8",
+                      error: "#EF4444",
+                      inProgress: "#4F46E5",
+                      complete: "#10B981",
+                      sourceBg: "#F8FAFC"
+                    }
+                  }
+                }}
+              >
+                {({ open }) => (
+                  <button
+                    type="button"
+                    onClick={() => open()}
+                    className="w-full flex flex-col items-center justify-center gap-4 py-12 border-2 border-dashed border-slate-200 rounded-3xl hover:border-indigo-400 hover:bg-indigo-50/30 transition-all group font-inter"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+                      <Camera className="w-6 h-6" />
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-bold text-slate-700">Carica Foto Prodotto</p>
+                      <p className="text-xs text-slate-400 mt-1">Clicca per scattare una foto o scegliere un file</p>
+                    </div>
+                  </button>
+                )}
+              </CldUploadWidget>
+            ) : (
+              <div className="relative w-40 h-40 group animate-scale-in">
+                <img 
+                  src={watch('fotoUrl')} 
+                  alt="Anteprima" 
+                  className="w-full h-full object-cover rounded-2xl shadow-lg ring-1 ring-slate-200" 
+                />
+                <button
+                  type="button"
+                  onClick={() => setValue('fotoUrl', '')}
+                  className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center pointer-events-none">
+                   <p className="text-[10px] font-bold text-white uppercase tracking-wider">Cambia Foto</p>
+                </div>
               </div>
             )}
+            
+            <input type="hidden" {...register('fotoUrl')} />
           </div>
         </div>
 
