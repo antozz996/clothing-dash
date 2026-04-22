@@ -6,8 +6,12 @@ const globalForPrisma = globalThis as unknown as {
 
 const createPrismaClient = () => {
   return new PrismaClient({ 
-    // In Prisma 7, se non c'è l'URL nello schema, lo passiamo qui
-    datasourceUrl: process.env.DATABASE_URL,
+    // Correzione per Prisma 7: usiamo l'oggetto datasources
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
+    },
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   })
 }
