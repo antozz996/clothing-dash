@@ -1,0 +1,171 @@
+// Schema Prisma — Gestionale Ordini Abbigliamento
+// Dress & Company S.r.l.
+// SQLite locale per sviluppo offline-first
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Contatori progressivi (Ordini e DDT) ───────────────────────
+model Contatore {
+  id         Int    @id @default(autoincrement())
+  anno       Int
+  tipo       String // 'ORD' o 'DDT'
+  ultimoProg Int    @default(0) @map("ultimo_prog")
+
+  @@unique([anno, tipo])
+  @@map("contatori")
+}
+
+// ─── Anagrafica Clienti ─────────────────────────────────────────
+model Cliente {
+  id              String   @id @default(uuid())
+  ragioneSociale  String   @map("ragione_sociale")
+  indirizzo       String?
+  cap             String?
+  citta           String?
+  provincia       String?
+  piva            String?
+  cf              String?
+  email           String?
+  telefono        String?
+  note            String?
+  attivo          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  ordini Ordine[]
+  ddt    Ddt[]
+
+  @@map("clienti")
+}
+
+// ─── Catalogo Prodotti ──────────────────────────────────────────
+model Prodotto {
+  id              String   @id @default(uuid())
+  sku             String   @unique
+  descrizione     String
+  prezzoUnitario  Float    @map("prezzo_unitario")
+  taglie          String   // JSON string: ["38","40","42","44","46","48"]
+  colori          String   // JSON string: ["RED","BLACK","NUDE ROSE"]
+  fotoUrl         String?  @map("foto_url")
+  attivo          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  righeGriglia RigaGriglia[]
+
+  @@map("prodotti")
+}
+
+// ─── Ordini ─────────────────────────────────────────────────────
+model Ordine {
+  id                String   @id @default(uuid())
+  progressivo       Int
+  anno              Int
+  numeroDocumento   String   @unique @map("numero_documento")
+  clienteId         String   @map("cliente_id")
+  dataOrdine        DateTime @default(now()) @map("data_ordine")
+  stato             String   @default("bozza") // bozza | confermato | spedito | annullato
+  note              String?
+  imponibile        Float    @default(0)
+  iva               Float    @default(0)
+  totaleIvato       Float    @default(0) @map("totale_ivato")
+  totaleCapi        Int      @default(0) @map("totale_capi")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  cliente      Cliente       @relation(fields: [clienteId], references: [id])
+  righeGriglia RigaGriglia[]
+  ddt          Ddt[]
+
+  @@unique([progressivo, anno])
+  @@map("ordini")
+}
+
+// ─── Righe Griglia (SKU × Colore × Taglia) ─────────────────────
+model RigaGriglia {
+  id              String  @id @default(uuid())
+  ordineId        String  @map("ordine_id")
+  prodottoId      String? @map("prodotto_id")
+
+  // Snapshot al momento dell'ordine
+  sku             String
+  descrizione     String
+  prezzoUnitario  Float   @map("prezzo_unitario")
+  fotoUrl         String? @map("foto_url")
+
+  colore          String
+  taglia          String
+  quantita        Int     @default(0)
+  importoRiga     Float   @default(0) @map("importo_riga")
+  sortOrder       Int     @default(0) @map("sort_order")
+
+  ordine   Ordine    @relation(fields: [ordineId], references: [id], onDelete: Cascade)
+  prodotto Prodotto? @relation(fields: [prodottoId], references: [id])
+
+  @@map("righe_griglia")
+}
+
+// ─── DDT (Documento di Trasporto) ───────────────────────────────
+model Ddt {
+  id                   String    @id @default(uuid())
+  progressivo          Int
+  anno                 Int
+  numeroDocumento      String    @unique @map("numero_documento")
+  ordineId             String?   @map("ordine_id")
+  clienteId            String    @map("cliente_id")
+  dataDdt              DateTime  @default(now()) @map("data_ddt")
+
+  // Mittente
+  mittenteNome         String?   @map("mittente_nome")
+  mittenteIndirizzo    String?   @map("mittente_indirizzo")
+
+  // Destinatario
+  destNome             String?   @map("dest_nome")
+  destIndirizzo        String?   @map("dest_indirizzo")
+  destCap              String?   @map("dest_cap")
+  destCitta            String?   @map("dest_citta")
+  destProvincia        String?   @map("dest_provincia")
+
+  // Destinazione diversa
+  destDiversa          Boolean   @default(false) @map("dest_diversa")
+  destDivNome          String?   @map("dest_div_nome")
+  destDivIndirizzo     String?   @map("dest_div_indirizzo")
+  destDivCap           String?   @map("dest_div_cap")
+  destDivCitta         String?   @map("dest_div_citta")
+  destDivProvincia     String?   @map("dest_div_provincia")
+
+  condizioniPagamento  String?   @map("condizioni_pagamento")
+  bancaAppoggio        String?   @map("banca_appoggio")
+  agente               String?
+  note                 String?
+  dataConsegnaPrevista DateTime? @map("data_consegna_prevista")
+  createdAt            DateTime  @default(now()) @map("created_at")
+
+  cliente  Cliente   @relation(fields: [clienteId], references: [id])
+  ordine   Ordine?   @relation(fields: [ordineId], references: [id])
+  righeDdt RigaDdt[]
+
+  @@unique([progressivo, anno])
+  @@map("ddt")
+}
+
+// ─── Righe DDT (solo per DDT standalone) ────────────────────────
+model RigaDdt {
+  id          String  @id @default(uuid())
+  ddtId       String  @map("ddt_id")
+  sku         String
+  descrizione String
+  fotoUrl     String? @map("foto_url")
+  colore      String
+  taglia      String
+  quantita    Int     @default(0)
+  sortOrder   Int     @default(0) @map("sort_order")
+
+  ddt Ddt @relation(fields: [ddtId], references: [id], onDelete: Cascade)
+
+  @@map("righe_ddt")
+}
