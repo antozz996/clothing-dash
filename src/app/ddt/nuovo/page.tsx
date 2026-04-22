@@ -7,7 +7,17 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import GrigliaTaglieEditor from '@/components/ordini/GrigliaTaglieEditor'
 
-export default function DdtForm() {
+import { Suspense } from 'react'
+
+export default function DdtPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-slate-500 font-inter">Caricamento modulo...</div>}>
+      <DdtForm />
+    </Suspense>
+  )
+}
+
+function DdtForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const fromOrderId = searchParams.get('orderId')
