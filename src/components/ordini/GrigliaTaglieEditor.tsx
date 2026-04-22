@@ -37,11 +37,14 @@ interface GridState {
     }
   }
 }
-
+interface Props {
+  data: GridState
+  onChange: (newState: GridState) => void
+  prodottiDisponibili: Prodotto[]
   readOnly?: boolean
- }
- 
- export default function GrigliaTaglieEditor({ data, onChange, prodottiDisponibili, readOnly }: Props) {
+}
+
+export default function GrigliaTaglieEditor({ data, onChange, prodottiDisponibili, readOnly }: Props) {
   const [searchTerm, setSearchTerm] = useState('')
   const [showResults, setShowResults] = useState(false)
 
