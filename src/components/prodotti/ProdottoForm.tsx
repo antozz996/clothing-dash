@@ -12,8 +12,11 @@ import { cn } from '@/lib/utils'
 
 const prodottoSchema = z.object({
   sku: z.string().min(1, 'Lo SKU è obbligatorio'),
-  descrizione: z.string().min(1, 'La descrizione è obbligatoria'),
-  prezzoUnitario: z.string().or(z.number()).transform(v => typeof v === 'string' ? parseFloat(v) : v),
+  descrizione: z.string().optional().or(z.literal('')),
+  prezzoUnitario: z.string().or(z.number()).optional().or(z.literal('')).transform(v => {
+    if (!v) return 0
+    return typeof v === 'string' ? parseFloat(v) : v
+  }),
   taglie: z.array(z.string()).min(1, 'Inserisci almeno una taglia'),
   colori: z.array(z.string()).min(1, 'Inserisci almeno un colore'),
   fotoUrl: z.string().optional().or(z.literal('')),
@@ -175,7 +178,7 @@ export default function ProdottoForm({ params }: { params?: { id?: string } }) {
             </div>
 
             <div className="space-y-1.5 font-inter">
-              <label className="text-xs font-bold text-slate-500 ml-1">Prezzo Unitario (€) <span className="text-red-500">*</span></label>
+              <label className="text-xs font-bold text-slate-500 ml-1">Prezzo Unitario (€)</label>
               <div className="relative">
                 <Euro className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
@@ -193,7 +196,7 @@ export default function ProdottoForm({ params }: { params?: { id?: string } }) {
             </div>
 
             <div className="md:col-span-2 space-y-1.5 font-inter">
-              <label className="text-xs font-bold text-slate-500 ml-1">Descrizione <span className="text-red-500">*</span></label>
+              <label className="text-xs font-bold text-slate-500 ml-1">Descrizione</label>
               <textarea
                 {...register('descrizione')}
                 rows={3}

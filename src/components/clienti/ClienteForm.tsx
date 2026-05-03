@@ -5,21 +5,25 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { ArrowLeft, Save, Loader2, User, Building, MapPin, Hash, Mail, Phone, StickyNote } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, User, Building, MapPin, Hash, Mail, Phone, StickyNote, Truck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 
 const clienteSchema = z.object({
   ragioneSociale: z.string().min(1, 'Ragione sociale obbligatoria'),
-  indirizzo: z.string().optional(),
-  cap: z.string().optional(),
-  citta: z.string().optional(),
-  provincia: z.string().optional().refine(val => !val || val.length <= 5, 'Max 5 caratteri'),
-  piva: z.string().optional(),
-  cf: z.string().optional(),
+  indirizzo: z.string().optional().or(z.literal('')),
+  cap: z.string().optional().or(z.literal('')),
+  citta: z.string().optional().or(z.literal('')),
+  provincia: z.string().optional().or(z.literal('')).refine(val => !val || val.length <= 5, 'Max 5 caratteri'),
+  piva: z.string().optional().or(z.literal('')),
+  cf: z.string().optional().or(z.literal('')),
   email: z.string().email('Email non valida').optional().or(z.literal('')),
-  telefono: z.string().optional(),
-  note: z.string().optional(),
+  telefono: z.string().optional().or(z.literal('')),
+  indirizzoSpedizione: z.string().optional().or(z.literal('')),
+  capSpedizione: z.string().optional().or(z.literal('')),
+  cittaSpedizione: z.string().optional().or(z.literal('')),
+  provinciaSpedizione: z.string().optional().or(z.literal('')),
+  note: z.string().optional().or(z.literal('')),
 })
 
 type ClienteForm = z.infer<typeof clienteSchema>
@@ -34,6 +38,8 @@ export default function ClienteForm({ params }: { params?: { id?: string } }) {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<ClienteForm>({
     resolver: zodResolver(clienteSchema),
@@ -159,9 +165,11 @@ export default function ClienteForm({ params }: { params?: { id?: string } }) {
 
         {/* address info */}
         <div className="card p-6 md:p-8 bg-white shadow-lg ring-1 ring-slate-200 rounded-3xl space-y-6">
-          <div className="flex items-center gap-2 text-indigo-600 font-bold text-sm uppercase tracking-wider mb-2">
-            <MapPin className="w-4 h-4" />
-            Indirizzo di Sede
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-indigo-600 font-bold text-sm uppercase tracking-wider">
+              <MapPin className="w-4 h-4" />
+              Indirizzo di Sede
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -198,6 +206,68 @@ export default function ClienteForm({ params }: { params?: { id?: string } }) {
                 {...register('provincia')}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white transition-all focus:border-indigo-500 uppercase"
                 placeholder="RM"
+                maxLength={5}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* shipping address info */}
+        <div className="card p-6 md:p-8 bg-white shadow-lg ring-1 ring-slate-200 rounded-3xl space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-indigo-600 font-bold text-sm uppercase tracking-wider">
+              <Truck className="w-4 h-4" />
+              Indirizzo di Spedizione
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const values = watch()
+                setValue('indirizzoSpedizione', values.indirizzo)
+                setValue('capSpedizione', values.cap)
+                setValue('cittaSpedizione', values.citta)
+                setValue('provinciaSpedizione', values.provincia)
+              }}
+              className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2 py-1 rounded-md transition-colors"
+            >
+              COPIA DA SEDE PRINCIPALE
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-3 space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 ml-1">Indirizzo di Spedizione</label>
+              <input
+                {...register('indirizzoSpedizione')}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white transition-all focus:border-indigo-500"
+                placeholder="Via Milano, 20"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 ml-1">CAP</label>
+              <input
+                {...register('capSpedizione')}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white transition-all focus:border-indigo-500"
+                placeholder="20100"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 ml-1">Città</label>
+              <input
+                {...register('cittaSpedizione')}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white transition-all focus:border-indigo-500"
+                placeholder="Milano"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 ml-1">Provincia</label>
+              <input
+                {...register('provinciaSpedizione')}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white transition-all focus:border-indigo-500 uppercase"
+                placeholder="MI"
                 maxLength={5}
               />
             </div>

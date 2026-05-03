@@ -24,9 +24,13 @@ const navItems = [
   { href: '/report', label: 'Report', icon: BarChart3 },
 ]
 
-export default function Sidebar() {
+interface SidebarProps {
+  collapsed: boolean
+  setCollapsed: (val: boolean) => void
+}
+
+export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
   const pathname = usePathname()
-  const [collapsed, setCollapsed] = useState(false)
 
   return (
     <>

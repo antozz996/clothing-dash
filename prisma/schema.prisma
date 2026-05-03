@@ -34,6 +34,10 @@ model Cliente {
   cf              String?
   email           String?
   telefono        String?
+  indirizzoSpedizione String? @map("indirizzo_spedizione")
+  capSpedizione       String? @map("cap_spedizione")
+  cittaSpedizione     String? @map("citta_spedizione")
+  provinciaSpedizione String? @map("provincia_spedizione")
   note            String?
   attivo          Boolean  @default(true)
   createdAt       DateTime @default(now()) @map("created_at")

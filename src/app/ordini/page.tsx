@@ -155,6 +155,7 @@ export default function OrdiniPage() {
                       <div className="flex items-center justify-end gap-1">
                         <Link
                           href={`/ordini/${ord.id}`}
+                          title="Vedi Dettaglio Ordine"
                           className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
                         >
                           <FileText className="w-4 h-4" />
@@ -162,6 +163,7 @@ export default function OrdiniPage() {
                         <a
                           href={`/api/ordini/${ord.id}/pdf`}
                           target="_blank"
+                          title="Stampa Commissione d'Ordine"
                           rel="noopener noreferrer"
                           className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
                         >
@@ -170,6 +172,7 @@ export default function OrdiniPage() {
                         {(ord.stato === 'confermato' || ord.stato === 'spedito') && (
                           <Link
                             href={`/ddt/nuovo?orderId=${ord.id}`}
+                            title="Genera DDT da Ordine"
                             className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
                           >
                             <Truck className="w-4 h-4" />
