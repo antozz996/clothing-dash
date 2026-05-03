@@ -290,10 +290,12 @@ export default function PdfOrdine({ ordine }: Props) {
             <Text style={styles.termsTitle}>CONDIZIONI GENERALI DI VENDITA</Text>
             <Text style={styles.termsText}>1 Non si accettano reclami trascorsi otto giorni dal ricevimento di quanto fornito</Text>
             <Text style={styles.termsText}>2 La merce viaggia a rischio e pericolo del cliente, anche se venduta franco destino</Text>
-            <Text style={styles.termsText}>3 In caso di ritardo dei pagamenti, decorreranno gli interessi moratori nella misura del saggio legale di interesse aumentato di 7 punti</Text>
-            <Text style={styles.termsText}>4 Per qualsiasi controversia sarà Autorità Giudiziaria competente nel territorio della Ditta venditrice per ogni controversia il foro competente è di Napoli</Text>
-            <Text style={[styles.termsText, { marginTop: 5 }]}>DLGS 196/03 TUTELA DELLA PRIVACY</Text>
+            <Text style={styles.termsText}>3 In caso di ritardo dei pagamenti, decorreranno gli interessi moratori nella misura del saggio legale d&apos;interesse aumentato di 7 punti</Text>
+            <Text style={styles.termsText}>4 Per qualsiasi controversia adirà Autorità Giudiziaria competente nel territorio della Ditta venditrice per ogni controversia il foro competente è di Napoli</Text>
+            <Text style={[styles.termsText, { marginTop: 5, fontWeight: 'bold' }]}>DLGS 196/03 TUTELA DELLA PRIVACY :</Text>
             <Text style={styles.termsText}>i Vs. Dati anagrafici saranno trattati per fini amministrativi e per adempimento obblighi di legge.</Text>
+            <Text style={[styles.termsText, { marginTop: 10 }]}>Pregasi controllare esattezza dei dati fiscali del cliente .</Text>
+            <Text style={styles.termsText}>In caso di errori non ci riterremo responsabili in solido come previsto dall’art. 41 D.P.R. 26/10/72 n°633</Text>
           </View>
         </View>
 
