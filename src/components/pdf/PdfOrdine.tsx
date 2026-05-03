@@ -1,186 +1,244 @@
 import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer'
 import { formatData, formatEuro } from '@/lib/calcoli'
-
-// Font registration (using default Helvetica for reliability)
-// If custom fonts are needed, they would be registered here.
+import React from 'react'
 
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
-    fontSize: 9,
+    padding: 20,
+    fontSize: 7,
     fontFamily: 'Helvetica',
-    color: '#333',
+    color: '#000',
     backgroundColor: '#fff',
   },
-  header: {
+  
+  // Header Superiore
+  headerSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    paddingBottom: 10,
+    marginBottom: 10,
   },
-  aziendaInfo: {
-    flexDirection: 'column',
-    gap: 2,
+  companyInfo: {
+    width: '55%',
   },
-  aziendaName: {
-    fontSize: 14,
+  companyName: {
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 2,
+    marginBottom: 4,
   },
-  aziendaSmall: {
-    fontSize: 7,
-    color: '#666',
+  companyDetail: {
+    fontSize: 8,
+    marginBottom: 1,
   },
-  titleBlock: {
+  termsSection: {
+    width: '40%',
     textAlign: 'right',
   },
-  docType: {
-    fontSize: 12,
+  termsTitle: {
+    fontSize: 7,
     fontWeight: 'bold',
-    color: '#4f46e5',
-    textTransform: 'uppercase',
+    marginBottom: 2,
+    textDecoration: 'underline',
   },
-  docNumber: {
-    fontSize: 10,
-    fontWeight: 'normal',
-    color: '#000',
-    marginTop: 2,
+  termsText: {
+    fontSize: 5.5,
+    marginBottom: 1,
+    lineHeight: 1.2,
   },
-  
-  // Addresses
-  addresses: {
+
+  // Box Indirizzi
+  addressContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-    gap: 20,
+    borderWidth: 1,
+    borderColor: '#000',
+    marginBottom: 0, // Si unisce alla riga sotto
   },
   addressBox: {
     flex: 1,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#eee',
-    borderRadius: 4,
-    backgroundColor: '#f9f9f9',
-  },
-  addressTitle: {
-    fontSize: 7,
-    fontWeight: 'bold',
-    color: '#999',
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  addressContent: {
-    fontSize: 9,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  addressSub: {
-    fontSize: 8,
-    color: '#555',
-  },
-
-  // Info Row (Code, Date, Agent)
-  infoBar: {
-    flexDirection: 'row',
-    borderWidth: 1,
-    borderColor: '#eee',
-    marginBottom: 20,
-  },
-  infoCol: {
-    flex: 1,
     padding: 5,
     borderRightWidth: 1,
-    borderRightColor: '#eee',
-    textAlign: 'center',
+    borderRightColor: '#000',
+    minHeight: 60,
+  },
+  addressBoxLast: {
+    flex: 1,
+    padding: 5,
+    minHeight: 60,
+  },
+  labelSmall: {
+    fontSize: 6,
+    fontStyle: 'italic',
+    marginBottom: 3,
+  },
+  addressName: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  addressText: {
+    fontSize: 8,
+    marginBottom: 1,
+  },
+
+  // Info Bar (Codici, Date, etc)
+  infoGrid: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: '#000',
+    marginBottom: 0,
+  },
+  infoCell: {
+    flex: 1,
+    padding: 4,
+    borderRightWidth: 1,
+    borderRightColor: '#000',
+  },
+  infoCellLast: {
+    flex: 1,
+    padding: 4,
   },
   infoLabel: {
     fontSize: 6,
-    color: '#999',
-    textTransform: 'uppercase',
+    fontStyle: 'italic',
     marginBottom: 2,
   },
   infoValue: {
     fontSize: 8,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 
-  // Table
-  table: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginBottom: 20,
-  },
+  // Table Header
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#4f46e5',
-    color: '#fff',
-    padding: 6,
-    fontWeight: 'bold',
-    borderRadius: 2,
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: '#000',
+    backgroundColor: '#fff',
   },
+  colArticolo: { width: '45%', padding: 4, borderRightWidth: 1, borderRightColor: '#000', textAlign: 'center' },
+  colImporto: { width: '12%', padding: 4, borderRightWidth: 1, borderRightColor: '#000', textAlign: 'center' },
+  colGriglia: { width: '43%', padding: 4, textAlign: 'center' },
+  
+  // Table Rows
   tableRow: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    padding: 8,
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: '#000',
+    minHeight: 80,
+  },
+  rowArticolo: {
+    width: '45%',
+    flexDirection: 'row',
+    padding: 5,
+    borderRightWidth: 1,
+    borderRightColor: '#000',
+  },
+  productImage: {
+    width: 60,
+    height: 70,
+    marginRight: 10,
+    objectFit: 'contain',
+  },
+  productDetails: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  sku: { fontSize: 10, fontWeight: 'bold', marginBottom: 5 },
+  description: { fontSize: 8, color: '#333' },
+  
+  rowImporto: {
+    width: '12%',
+    justifyContent: 'center',
     alignItems: 'center',
-    minHeight: 40,
+    borderRightWidth: 1,
+    borderRightColor: '#000',
   },
-  colImg: { width: '12%' },
-  colDesc: { width: '40%' },
-  colPrice: { width: '10%', textAlign: 'right' },
-  colGrid: { width: '30%', paddingLeft: 10 },
-  colTot: { width: '8%', textAlign: 'right', fontWeight: 'bold' },
+  price: { fontSize: 10, fontWeight: 'bold' },
 
-  photo: {
-    width: 30,
-    height: 35,
-    borderRadius: 2,
-    objectFit: 'cover',
+  rowGriglia: {
+    width: '43%',
+    padding: 10,
+    justifyContent: 'center',
   },
-  skuText: { fontSize: 8, fontWeight: 'bold' },
-  descText: { fontSize: 7, color: '#666' },
 
-  gridRow: {
+  // Griglia Taglie interna
+  matrix: {
+    width: '100%',
+    borderWidth: 0.5,
+    borderColor: '#000',
+  },
+  matrixHeader: {
     flexDirection: 'row',
-    gap: 4,
-    flexWrap: 'wrap',
+    backgroundColor: '#eee',
+    borderBottomWidth: 0.5,
+    borderColor: '#000',
   },
-  gridCell: {
+  matrixRow: {
+    flexDirection: 'row',
+  },
+  matrixCell: {
+    flex: 1,
+    padding: 3,
+    textAlign: 'center',
+    borderRightWidth: 0.5,
+    borderColor: '#000',
     fontSize: 7,
-    color: '#444',
+  },
+  matrixCellLast: {
+    flex: 1,
+    padding: 3,
+    textAlign: 'center',
+    fontSize: 7,
+  },
+  matrixColHeader: {
+    fontWeight: 'bold',
+  },
+  matrixTotCell: {
+    backgroundColor: '#dcfce7', // Light green
+    fontWeight: 'bold',
   },
 
-  // Totals
-  footer: {
+  // Footer / Totals
+  summarySection: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#000',
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: '#000',
   },
-  noteBox: {
-    width: '60%',
+  notesBox: {
+    width: '70%',
+    padding: 5,
+    borderRightWidth: 1,
+    borderRightColor: '#000',
   },
   totalsBox: {
-    width: '35%',
-    gap: 4,
+    width: '30%',
+    padding: 0,
   },
-  totalLine: {
+  totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    padding: 3,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#000',
   },
   totalFinal: {
-    marginTop: 5,
-    paddingTop: 5,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    fontSize: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 5,
+    backgroundColor: '#eee',
     fontWeight: 'bold',
-    color: '#4f46e5',
+    fontSize: 9,
+  },
+
+  pageNumber: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    fontSize: 7,
+    color: '#666',
   }
 })
 
@@ -189,136 +247,200 @@ interface Props {
 }
 
 export default function PdfOrdine({ ordine }: Props) {
-  // Raggruppa le righe per SKU/ProdottoId per mostrare la griglia compatta
-  const groupedItems = ordine.righeGriglia.reduce((acc: any, r: any) => {
-    if (!acc[r.sku]) {
-      acc[r.sku] = {
+  // Raggruppa per Prodotto + Colore per avere una griglia dedicata per ogni variante
+  const groupedByProductAndColor = ordine.righeGriglia.reduce((acc: any, r: any) => {
+    const key = `${r.prodottoId || r.sku}-${r.colore}`
+    if (!acc[key]) {
+      acc[key] = {
         sku: r.sku,
         descrizione: r.descrizione,
         prezzoUnitario: r.prezzoUnitario,
         fotoUrl: r.fotoUrl,
-        variants: []
+        colore: r.colore,
+        taglie: {} as Record<string, number>,
+        totale: 0
       }
     }
-    acc[r.sku].variants.push(r)
+    acc[key].taglie[r.taglia] = (acc[key].taglie[r.taglia] || 0) + r.quantita
+    acc[key].totale += r.quantita
     return acc
   }, {})
 
+  // Calcola tutte le taglie uniche presenti nel sistema per questo ordine per creare le intestazioni colonne
+  // In alternativa, possiamo usare le taglie specifiche di ogni prodotto se variano molto.
+  // Per l'abbigliamento spesso si usa una griglia fissa o dinamica per riga.
+  
   return (
     <Document title={`Ordine_${ordine.numeroDocumento.replace('/', '_')}`}>
       <Page size="A4" style={styles.page}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.aziendaInfo}>
-            <Text style={styles.aziendaName}>DRESS & COMPANY S.R.L.</Text>
-            <Text style={styles.aziendaSmall}>Via Avini - Parco De Martino, 82/84 | 80040 Terzigno (NA)</Text>
-            <Text style={styles.aziendaSmall}>P.IVA: 05433931218 | Tel: +39 081 8271345</Text>
-            <Text style={styles.aziendaSmall}>Email: amministrazione@dressecompany.it</Text>
+        {/* Intestazione Aziendale */}
+        <View style={styles.headerSection}>
+          <View style={styles.companyInfo}>
+            <Text style={styles.companyName}>DRESS & COMPANY S.R.L.</Text>
+            <Text style={styles.companyDetail}>Sede Legale: Via Avini – Parco de Martino,82/84 - 80040 - Terzigno (Na)</Text>
+            <Text style={styles.companyDetail}>Sede Operativa: Via Saverio Baldacchini, 6 – 80044 - Ottaviano (Na)</Text>
+            <Text style={styles.companyDetail}>Mail : amministrazione@dressecompany.it</Text>
+            <Text style={styles.companyDetail}>Tel. +39 0818271345 - +39 0813385965</Text>
+            <Text style={styles.companyDetail}>Pec: dressecompanysrl@pec.it - Codice Univoco KRRH6B9</Text>
+            <Text style={styles.companyDetail}>C. Fisc. e P.Iva 05433931218</Text>
+            <Text style={styles.companyDetail}>Banca Fideuram | IBAN : IT80J0329601601000065028001</Text>
+            <Text style={styles.companyDetail}>Bic/Swift FIBKITMM</Text>
           </View>
-          <View style={styles.titleBlock}>
-            <Text style={styles.docType}>Commissione d&apos;Ordine</Text>
-            <Text style={styles.docNumber}>N. {ordine.numeroDocumento}</Text>
-          </View>
-        </View>
-
-        {/* Addresses */}
-        <View style={styles.addresses}>
-          <View style={styles.addressBox}>
-            <Text style={styles.addressTitle}>Spett.le Cliente</Text>
-            <Text style={styles.addressContent}>{ordine.cliente.ragioneSociale}</Text>
-            <Text style={styles.addressSub}>{ordine.cliente.indirizzo}</Text>
-            <Text style={styles.addressSub}>{ordine.cliente.cap} {ordine.cliente.citta} ({ordine.cliente.provincia})</Text>
-            <Text style={styles.addressSub}>P.IVA: {ordine.cliente.piva}</Text>
-          </View>
-          <View style={styles.addressBox}>
-            <Text style={styles.addressTitle}>Info Documento</Text>
-            <Text style={styles.addressSub}>Data Documento: {formatData(ordine.dataOrdine)}</Text>
-            <Text style={styles.addressSub}>Cond. Pagamento: Vedi accordi</Text>
-            <Text style={styles.addressSub}>Agente: Direzione</Text>
+          <View style={styles.termsSection}>
+            <Text style={styles.termsTitle}>CONDIZIONI GENERALI DI VENDITA</Text>
+            <Text style={styles.termsText}>1 Non si accettano reclami trascorsi otto giorni dal ricevimento di quanto fornito</Text>
+            <Text style={styles.termsText}>2 La merce viaggia a rischio e pericolo del cliente, anche se venduta franco destino</Text>
+            <Text style={styles.termsText}>3 In caso di ritardo dei pagamenti, decorreranno gli interessi moratori nella misura del saggio legale di interesse aumentato di 7 punti</Text>
+            <Text style={styles.termsText}>4 Per qualsiasi controversia sarà Autorità Giudiziaria competente nel territorio della Ditta venditrice per ogni controversia il foro competente è di Napoli</Text>
+            <Text style={[styles.termsText, { marginTop: 5 }]}>DLGS 196/03 TUTELA DELLA PRIVACY</Text>
+            <Text style={styles.termsText}>i Vs. Dati anagrafici saranno trattati per fini amministrativi e per adempimento obblighi di legge.</Text>
           </View>
         </View>
 
-        {/* Table */}
-        <View style={styles.table}>
-          <View style={[styles.tableHeader]}>
-            <Text style={styles.colImg}>Articolo</Text>
-            <Text style={styles.colDesc}>Descrizione</Text>
-            <Text style={styles.colPrice}>Prezzo</Text>
-            <Text style={styles.colGrid}>Griglia Taglie / Colori</Text>
-            <Text style={styles.colTot}>Q.tà</Text>
+        {/* Indirizzi */}
+        <View style={styles.addressContainer}>
+          <View style={styles.addressBox}>
+            <Text style={styles.labelSmall}>SPETT.LE</Text>
+            <Text style={styles.addressName}>{ordine.cliente.ragioneSociale}</Text>
+            <Text style={styles.addressText}>{ordine.cliente.indirizzo}</Text>
+            <Text style={styles.addressText}>{ordine.cliente.cap} {ordine.cliente.citta} ({ordine.cliente.provincia})</Text>
           </View>
+          <View style={styles.addressBoxLast}>
+            <Text style={styles.labelSmall}>DESTINAZIONE DIVERSA</Text>
+            {ordine.cliente.indirizzoSpedizione ? (
+              <>
+                <Text style={styles.addressName}>{ordine.cliente.ragioneSociale}</Text>
+                <Text style={styles.addressText}>{ordine.cliente.indirizzoSpedizione}</Text>
+                <Text style={styles.addressText}>{ordine.cliente.capSpedizione} {ordine.cliente.cittaSpedizione} ({ordine.cliente.provinciaSpedizione})</Text>
+              </>
+            ) : (
+              <Text style={[styles.addressText, { fontStyle: 'italic', color: '#999' }]}>Come sede legale</Text>
+            )}
+          </View>
+        </View>
 
-          {Object.values(groupedItems).map((item: any, idx: number) => {
-            const totItem = item.variants.reduce((sum: number, v: any) => sum + v.quantita, 0)
-            
-            return (
-              <View key={idx} style={styles.tableRow} wrap={false}>
-                <View style={styles.colImg}>
-                   {item.fotoUrl ? (
-                     <Image src={item.fotoUrl} style={styles.photo} />
-                   ) : (
-                     <View style={[styles.photo, { border: '1px solid #eee' }]} />
-                   )}
-                </View>
-                <View style={styles.colDesc}>
-                   <Text style={styles.skuText}>{item.sku}</Text>
-                   <Text style={styles.descText}>{item.descrizione}</Text>
-                </View>
-                <View style={styles.colPrice}>
-                  <Text>{formatEuro(item.prezzoUnitario)}</Text>
-                </View>
-                <View style={styles.colGrid}>
-                  <View style={styles.gridRow}>
-                    {item.variants.map((v: any, vIdx: number) => (
-                      <Text key={vIdx} style={styles.gridCell}>
-                        {v.colore} | {v.taglia}: {v.quantita}
-                      </Text>
-                    ))}
-                  </View>
-                </View>
-                <View style={styles.colTot}>
-                  <Text>{totItem}</Text>
+        {/* Info Documento */}
+        <View style={styles.infoGrid}>
+          <View style={styles.infoCell}>
+             <Text style={styles.infoLabel}>COD.CLI</Text>
+             <Text style={styles.infoValue}>C-{ordine.cliente.id.substring(0,4).toUpperCase()}</Text>
+          </View>
+          <View style={styles.infoCell}>
+             <Text style={styles.infoLabel}>C.F. / P.IVA</Text>
+             <Text style={styles.infoValue}>{ordine.cliente.cf || ordine.cliente.piva || '---'}</Text>
+          </View>
+          <View style={styles.infoCell}>
+             <Text style={styles.infoLabel}>AGENTE</Text>
+             <Text style={styles.infoValue}>DIREZIONE</Text>
+          </View>
+          <View style={styles.infoCell}>
+             <Text style={styles.infoLabel}>TIPO DOCUMENTO</Text>
+             <Text style={styles.infoValue}>COMMISSIONE ORDINE</Text>
+          </View>
+          <View style={styles.infoCell}>
+             <Text style={styles.infoLabel}>DATA DOC.</Text>
+             <Text style={styles.infoValue}>{formatData(ordine.dataOrdine)}</Text>
+          </View>
+          <View style={styles.infoCellLast}>
+             <Text style={styles.infoLabel}>NR.DOC.</Text>
+             <Text style={styles.infoValue}>{ordine.numeroDocumento}</Text>
+          </View>
+        </View>
+
+        {/* Intestazione Tabella */}
+        <View style={styles.tableHeader}>
+           <Text style={styles.colArticolo}>ARTICOLO</Text>
+           <Text style={styles.colImporto}>IMPORTO</Text>
+           <Text style={styles.colGriglia}>GRIGLIA TAGLIE</Text>
+        </View>
+
+        {/* Righe Articoli */}
+        {Object.values(groupedByProductAndColor).map((item: any, idx: number) => {
+          // Determina le taglie da mostrare (le chiavi presenti in questo raggruppamento)
+          const sizes = Object.keys(item.taglie).sort()
+
+          return (
+            <View key={idx} style={styles.tableRow} wrap={false}>
+              <View style={styles.rowArticolo}>
+                {item.fotoUrl ? (
+                  <Image src={item.fotoUrl} style={styles.productImage} />
+                ) : (
+                  <View style={[styles.productImage, { border: '0.5px solid #eee' }]} />
+                )}
+                <View style={styles.productDetails}>
+                  <Text style={styles.sku}>{item.sku}</Text>
+                  <Text style={styles.description}>{item.descrizione}</Text>
                 </View>
               </View>
-            )
-          })}
+              
+              <View style={styles.rowImporto}>
+                <Text style={styles.price}>{formatEuro(item.prezzoUnitario)}</Text>
+              </View>
+
+              <View style={styles.rowGriglia}>
+                <View style={styles.matrix}>
+                   {/* Intestazione Taglie */}
+                   <View style={styles.matrixHeader}>
+                      <Text style={[styles.matrixCell, { width: 40, textAlign: 'left', fontWeight: 'bold' }]}>COL.</Text>
+                      {sizes.map(s => (
+                        <Text key={s} style={[styles.matrixCell, styles.matrixColHeader]}>{s}</Text>
+                      ))}
+                      <Text style={[styles.matrixCellLast, styles.matrixColHeader, { width: 30 }]}>ToT.</Text>
+                   </View>
+                   {/* Valori */}
+                   <View style={styles.matrixRow}>
+                      <Text style={[styles.matrixCell, { width: 40, textAlign: 'left', fontSize: 6 }]}>{item.colore}</Text>
+                      {sizes.map(s => (
+                        <Text key={s} style={styles.matrixCell}>{item.taglie[s] || 0}</Text>
+                      ))}
+                      <Text style={[styles.matrixCellLast, styles.matrixTotCell, { width: 30 }]}>{item.totale}</Text>
+                   </View>
+                </View>
+              </View>
+            </View>
+          )
+        })}
+
+        {/* Riepilogo Finale */}
+        <View style={styles.summarySection} wrap={false}>
+           <View style={styles.notesBox}>
+              <Text style={styles.infoLabel}>NOTE / CONDIZIONI PAGAMENTO</Text>
+              <Text style={[styles.addressText, { marginTop: 5 }]}>{ordine.note || 'PAGAMENTO DA CONCORDARE'}</Text>
+              
+              <View style={{ marginTop: 25, flexDirection: 'row', justifyContent: 'space-around' }}>
+                 <View style={{ alignItems: 'center' }}>
+                    <Text style={{ fontSize: 5, marginBottom: 10 }}>Firma per Accettazione</Text>
+                    <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#000', width: 100 }} />
+                 </View>
+                 <View style={{ alignItems: 'center' }}>
+                    <Text style={{ fontSize: 5, marginBottom: 10 }}>Firma Vettore</Text>
+                    <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#000', width: 100 }} />
+                 </View>
+              </View>
+           </View>
+           <View style={styles.totalsBox}>
+              <View style={styles.totalRow}>
+                 <Text style={styles.infoLabel}>TOTALE CAPI</Text>
+                 <Text style={styles.infoValue}>{ordine.totaleCapi}</Text>
+              </View>
+              <View style={styles.totalRow}>
+                 <Text style={styles.infoLabel}>IMPONIBILE</Text>
+                 <Text style={styles.infoValue}>{formatEuro(ordine.imponibile)}</Text>
+              </View>
+              <View style={styles.totalRow}>
+                 <Text style={styles.infoLabel}>IVA 22%</Text>
+                 <Text style={styles.infoValue}>{formatEuro(ordine.iva)}</Text>
+              </View>
+              <View style={styles.totalFinal}>
+                 <Text>TOTALE ORDINE</Text>
+                 <Text>{formatEuro(ordine.totaleIvato)}</Text>
+              </View>
+           </View>
         </View>
 
-        {/* Totals Section */}
-        <View style={styles.footer} wrap={false}>
-          <View style={styles.noteBox}>
-            <Text style={styles.addressTitle}>Note ed Annotazioni</Text>
-            <Text style={styles.addressSub}>{ordine.note || 'Nessuna nota aggiuntiva.'}</Text>
-            
-            <View style={{ marginTop: 20 }}>
-               <Text style={[styles.addressTitle, { fontSize: 6 }]}>Firma per accettazione</Text>
-               <View style={{ borderBottomWidth: 1, borderBottomColor: '#eee', width: 150, marginTop: 15 }} />
-            </View>
-          </View>
-          
-          <View style={styles.totalsBox}>
-            <View style={styles.totalLine}>
-              <Text>Totale Capi:</Text>
-              <Text>{ordine.totaleCapi}</Text>
-            </View>
-            <View style={styles.totalLine}>
-              <Text>Imponibile:</Text>
-              <Text>{formatEuro(ordine.imponibile)}</Text>
-            </View>
-            <View style={styles.totalLine}>
-              <Text>IVA 22%:</Text>
-              <Text>{formatEuro(ordine.iva)}</Text>
-            </View>
-            <View style={[styles.totalLine, styles.totalFinal]}>
-              <Text>TOTALE DOCUMENTO:</Text>
-              <Text>{formatEuro(ordine.totaleIvato)}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Page Number */}
-        <Text style={{ position: 'absolute', bottom: 20, right: 30, fontSize: 8, color: '#999' }} 
-          render={({ pageNumber, totalPages }) => `Pagina ${pageNumber} di ${totalPages}`} />
+        <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
+          `Pagina ${pageNumber} di ${totalPages}`
+        )} fixed />
       </Page>
     </Document>
   )
