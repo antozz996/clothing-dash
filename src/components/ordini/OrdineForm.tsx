@@ -206,7 +206,7 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
             {isEdit ? `Modifica Ordine` : 'Nuovo Ordine'}
           </h1>
           <p className="text-sm text-slate-500 font-inter">
-            Compila testata e articoli per Dress & Company
+            Compila testata e articoli per Horus Srl
           </p>
         </div>
       </div>

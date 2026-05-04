@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Gestionale Ordini — Dress & Company',
-  description: 'Gestionale ordini abbigliamento per Dress & Company S.r.l.',
+  title: 'Gestionale Ordini — Horus Srl',
+  description: 'Gestionale ordini abbigliamento per Horus Srl',
 }
 
 import MainLayout from '@/components/layout/MainLayout'

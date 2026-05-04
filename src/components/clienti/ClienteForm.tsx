@@ -137,7 +137,7 @@ export default function ClienteForm({ params }: { params?: { id?: string } }) {
                     "w-full px-4 py-3 rounded-xl border bg-slate-50/50 text-slate-900 transition-all focus:bg-white",
                     errors.ragioneSociale ? "border-red-500 focus:ring-red-50" : "border-slate-200 focus:border-indigo-500"
                   )}
-                  placeholder="Es. Dress & Company S.r.l."
+                  placeholder="Es. Horus Srl"
                 />
               </div>
               {errors.ragioneSociale && <p className="text-xs text-red-500 mt-1 ml-1">{errors.ragioneSociale.message}</p>}

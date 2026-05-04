@@ -64,7 +64,7 @@ export default function ClientiPage() {
             Anagrafica Clienti
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Gestisci i clienti e i loro dati di spedizione per Dress & Company
+            Gestisci i clienti e i loro dati di spedizione per Horus Srl
           </p>
         </div>
         <Link

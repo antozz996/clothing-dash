@@ -1,5 +1,5 @@
 // Schema Prisma — Gestionale Ordini Abbigliamento
-// Dress & Company S.r.l.
+// Horus Srl
 // SQLite locale per sviluppo offline-first
 
 generator client {
