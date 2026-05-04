@@ -250,15 +250,12 @@ export default function PdfDDT({ ddt }: { ddt: any }) {
         {/* Intestazione Aziendale */}
         <View style={styles.headerSection}>
           <View style={styles.companyInfo}>
-            <Text style={styles.companyName}>DRESS & COMPANY S.R.L.</Text>
-            <Text style={styles.companyDetail}>Sede Legale: Via Avini – Parco de Martino,82/84 - 80040 - Terzigno (Na)</Text>
-            <Text style={styles.companyDetail}>Sede Operativa: Via Saverio Baldacchini, 6 – 80044 - Ottaviano (Na)</Text>
-            <Text style={styles.companyDetail}>Mail : amministrazione@dressecompany.it</Text>
-            <Text style={styles.companyDetail}>Tel. +39 0818271345 - +39 0813385965</Text>
-            <Text style={styles.companyDetail}>Pec: dressecompanysrl@pec.it - Codice Univoco KRRH6B9</Text>
-            <Text style={styles.companyDetail}>C. Fisc. e P.Iva 05433931218</Text>
-            <Text style={styles.companyDetail}>Banca Fideuram | IBAN : IT80J0329601601000065028001</Text>
-            <Text style={styles.companyDetail}>Bic/Swift FIBKITMM</Text>
+            <Text style={styles.companyName}>HORUS S.R.L.</Text>
+            <Text style={styles.companyDetail}>Sede Legale: Via San Giacomo 30 - 80133 - Napoli</Text>
+            <Text style={styles.companyDetail}>Sede Operativa: Via San Giacomo 30 - 80133 - Napoli</Text>
+            <Text style={styles.companyDetail}>Mail : Amministrazione@noirshowroom.it</Text>
+            <Text style={styles.companyDetail}>Pec: horussrl@pecaruba.it - Codice Univoco KRRH6B9</Text>
+            <Text style={styles.companyDetail}>C. Fisc. e P.Iva 09578881212</Text>
           </View>
           <View style={styles.termsSection}>
             <Text style={styles.termsTitle}>CONDIZIONI GENERALI DI VENDITA</Text>
