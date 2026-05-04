@@ -84,6 +84,15 @@ export default function ReportPage() {
              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Filter className="w-4 h-4" />}
              Applica Filtri
            </button>
+           <a
+             href={`/api/report/pdf?${new URLSearchParams(filters as any).toString()}`}
+             target="_blank"
+             rel="noopener noreferrer"
+             className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-black transition-all shadow-md active:scale-95"
+           >
+             <Download className="w-4 h-4" />
+             Scarica Report PDF
+           </a>
            <button 
              onClick={resetFilters}
              className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all"
