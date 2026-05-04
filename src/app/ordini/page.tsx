@@ -152,30 +152,32 @@ export default function OrdiniPage() {
                       </span>
                     </td>
                     <td className="py-5 px-6 text-right">
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-2">
                         <Link
                           href={`/ordini/${ord.id}`}
-                          title="Vedi Dettaglio Ordine"
-                          className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-slate-200"
                         >
-                          <FileText className="w-5 h-5 lg:w-4 lg:h-4" />
+                          <FileText className="w-3.5 h-3.5" />
+                          <span>Dettaglio</span>
                         </Link>
+                        
                         <a
                           href={`/api/ordini/${ord.id}/pdf`}
                           target="_blank"
-                          title="Stampa Commissione d'Ordine"
                           rel="noopener noreferrer"
-                          className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-slate-200"
                         >
-                          <Printer className="w-5 h-5 lg:w-4 lg:h-4" />
+                          <Printer className="w-3.5 h-3.5" />
+                          <span>Stampa</span>
                         </a>
+
                         {(ord.stato === 'confermato' || ord.stato === 'spedito') && (
                           <Link
                             href={`/ddt/nuovo?orderId=${ord.id}`}
-                            title="Genera DDT da Ordine"
-                            className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-sm"
                           >
-                            <Truck className="w-5 h-5 lg:w-4 lg:h-4" />
+                            <Truck className="w-3.5 h-3.5" />
+                            <span>Crea DDT</span>
                           </Link>
                         )}
                       </div>
