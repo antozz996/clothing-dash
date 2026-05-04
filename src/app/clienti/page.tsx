@@ -155,15 +155,15 @@ export default function ClientiPage() {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           href={`/clienti/${cliente.id}`}
-                          className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                          className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100"
                         >
-                          <Edit className="w-4 h-4" />
+                          <Edit className="w-5 h-5 lg:w-4 lg:h-4" />
                         </Link>
                         <button
                           onClick={() => handleDelete(cliente.id)}
-                          className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                          className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-5 h-5 lg:w-4 lg:h-4" />
                         </button>
                       </div>
                     </td>

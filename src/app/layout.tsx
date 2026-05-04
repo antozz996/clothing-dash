@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import MainLayout from '@/components/layout/MainLayout'
 
 export const metadata: Metadata = {
   title: 'Gestionale Ordini — Horus Srl',
   description: 'Gestionale ordini abbigliamento per Horus Srl',
 }
-
-import MainLayout from '@/components/layout/MainLayout'
 
 export default function RootLayout({
   children,

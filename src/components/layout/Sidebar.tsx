@@ -46,10 +46,9 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 h-screen z-50 flex flex-col transition-all duration-300 ease-in-out',
-          collapsed ? 'w-[72px]' : 'w-[260px]'
+          'fixed left-0 top-0 h-screen z-50 flex flex-col transition-all duration-300 ease-in-out bg-[#0f172a]',
+          collapsed ? 'w-0 lg:w-[72px] -translate-x-full lg:translate-x-0' : 'w-[280px] lg:w-[260px] translate-x-0'
         )}
-        style={{ background: 'var(--sidebar-bg)' }}
       >
         {/* Header */}
         <div className={cn(
