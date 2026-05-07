@@ -101,9 +101,9 @@ const styles = StyleSheet.create({
   colMd: { flex: 2 },
   colSm: { flex: 1, textAlign: 'right' },
   productImage: {
-    width: 20,
-    height: 25,
-    marginRight: 8,
+    width: 40,
+    height: 50,
+    marginRight: 12,
     objectFit: 'contain',
   },
   sectionTitle: {
