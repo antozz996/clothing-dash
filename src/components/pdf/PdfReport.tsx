@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer'
 import { formatData, formatEuro } from '@/lib/calcoli'
 import React from 'react'
 
@@ -97,9 +97,15 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
     padding: 6,
   },
-  colLg: { flex: 3 },
+  colLg: { flex: 3, flexDirection: 'row', alignItems: 'center' },
   colMd: { flex: 2 },
   colSm: { flex: 1, textAlign: 'right' },
+  productImage: {
+    width: 20,
+    height: 25,
+    marginRight: 8,
+    objectFit: 'contain',
+  },
   sectionTitle: {
     fontSize: 10,
     fontWeight: 'bold',
@@ -178,7 +184,14 @@ export default function PdfReport({ data, filters }: { data: any, filters: any }
           </View>
           {data.perProdotto.sort((a: any, b: any) => b.quantita - a.quantita).slice(0, 20).map((p: any, i: number) => (
             <View key={i} style={styles.tableRow} wrap={false}>
-              <Text style={styles.colLg}>{p.sku} ({p.colore} / {p.taglia})</Text>
+              <View style={styles.colLg}>
+                {p.fotoUrl ? (
+                  <Image src={p.fotoUrl} style={styles.productImage} />
+                ) : (
+                  <View style={[styles.productImage, { border: '0.5px solid #eee' }]} />
+                )}
+                <Text>{p.sku} ({p.colore} / {p.taglia})</Text>
+              </View>
               <Text style={styles.colSm}>{p.quantita}</Text>
               <Text style={styles.colSm}>{formatEuro(p.valore)}</Text>
             </View>

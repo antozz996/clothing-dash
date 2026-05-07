@@ -69,7 +69,8 @@ export async function GET(request: Request) {
           colore: r.colore,
           taglia: r.taglia,
           quantita: 0,
-          valore: 0
+          valore: 0,
+          fotoUrl: r.fotoUrl
         }
       }
       aggregazioneProdotto[pKey].quantita += r.quantita
