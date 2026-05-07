@@ -114,9 +114,9 @@ export default function OrdiniPage() {
       {/* Table */}
       <div className="card overflow-hidden bg-white shadow-md ring-1 ring-slate-200 rounded-2xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
+          <table className="w-full text-sm text-left whitespace-nowrap">
+            <thead className="text-xs text-slate-500 bg-slate-50 uppercase font-semibold border-b border-slate-200">
+              <tr>
                 <th className="py-4 px-6 font-semibold text-slate-700">Ref. Documento</th>
                 <th className="py-4 px-6 font-semibold text-slate-700">Data</th>
                 <th className="py-4 px-6 font-semibold text-slate-700">Cliente</th>

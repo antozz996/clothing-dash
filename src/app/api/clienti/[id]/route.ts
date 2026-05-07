@@ -49,6 +49,12 @@ export async function PATCH(
         telefono: data.telefono,
         note: data.note,
         attivo: data.attivo,
+        pec: data.pec,
+        codiceUnivoco: data.codiceUnivoco,
+        indirizzoSpedizione: data.indirizzoSpedizione,
+        cittaSpedizione: data.cittaSpedizione,
+        capSpedizione: data.capSpedizione,
+        provinciaSpedizione: data.provinciaSpedizione,
       },
     })
 

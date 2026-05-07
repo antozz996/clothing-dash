@@ -13,6 +13,7 @@ interface Prodotto {
   taglie: string[]
   colori: string[]
   fotoUrl: string | null
+  categoria?: { id: string; nome: string }
 }
 
 export default function ProdottiPage() {
@@ -52,6 +53,14 @@ export default function ProdottiPage() {
     }
   }
 
+  // Raggruppa i prodotti per macro categoria
+  const groupedProdotti = prodotti.reduce((acc, p) => {
+    const catName = p.categoria?.nome || 'Altro / Nessuna Categoria'
+    if (!acc[catName]) acc[catName] = []
+    acc[catName].push(p)
+    return acc
+  }, {} as Record<string, Prodotto[]>)
+
   return (
     <div className="space-y-6 animate-fade-in px-4 md:px-0">
       {/* Header */}
@@ -64,13 +73,21 @@ export default function ProdottiPage() {
             Gestisci SKU, varianti di taglie/colori e listino prezzi
           </p>
         </div>
-        <Link
-          href="/prodotti/nuovo"
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg active:scale-95"
-        >
-          <Plus className="w-5 h-5" />
-          Nuovo Prodotto
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/prodotti/categorie"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition-all shadow-sm active:scale-95"
+          >
+            Categorie
+          </Link>
+          <Link
+            href="/prodotti/nuovo"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg active:scale-95"
+          >
+            <Plus className="w-5 h-5" />
+            Nuovo Prodotto
+          </Link>
+        </div>
       </div>
 
       {/* Search Bar */}
@@ -95,70 +112,79 @@ export default function ProdottiPage() {
           ))}
         </div>
       ) : prodotti.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
-          {prodotti.map((prodotto) => (
-            <div key={prodotto.id} className="card group bg-white shadow-md ring-1 ring-slate-200 rounded-3xl overflow-hidden flex flex-col hover:shadow-xl transition-all hover:-translate-y-1">
-              {/* Product Image Placeholder */}
-              <div className="relative h-48 bg-slate-100 flex items-center justify-center overflow-hidden">
-                {prodotto.fotoUrl ? (
-                  <img src={prodotto.fotoUrl} alt={prodotto.sku} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="flex flex-col items-center gap-2 text-slate-300">
-                    <Camera className="w-10 h-10" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Nessuna Foto</span>
-                  </div>
-                )}
-                
-                {/* Overlay actions */}
-                <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-3">
-                  <Link
-                    href={`/prodotti/${prodotto.id}`}
-                    className="p-3 rounded-full bg-white text-slate-900 hover:bg-indigo-500 hover:text-white transition-all shadow-lg active:scale-90"
-                  >
-                    <Edit className="w-5 h-5" />
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(prodotto.id)}
-                    className="p-3 rounded-full bg-white text-slate-900 hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-90"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+        <div className="space-y-12 pb-12">
+          {Object.entries(groupedProdotti).map(([catName, prods]) => (
+            <div key={catName}>
+              <h2 className="text-xl font-bold text-slate-800 mb-4 px-2 border-l-4 border-indigo-500">
+                {catName} <span className="text-sm font-normal text-slate-500 ml-2">({prods.length})</span>
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {prods.map((prodotto) => (
+                  <div key={prodotto.id} className="card group bg-white shadow-md ring-1 ring-slate-200 rounded-3xl overflow-hidden flex flex-col hover:shadow-xl transition-all hover:-translate-y-1">
+                    {/* Product Image Placeholder */}
+                    <div className="relative h-48 bg-slate-100 flex items-center justify-center overflow-hidden">
+                      {prodotto.fotoUrl ? (
+                        <img src={prodotto.fotoUrl} alt={prodotto.sku} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 text-slate-300">
+                          <Camera className="w-10 h-10" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">Nessuna Foto</span>
+                        </div>
+                      )}
+                      
+                      {/* Overlay actions */}
+                      <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-3">
+                        <Link
+                          href={`/prodotti/${prodotto.id}`}
+                          className="p-3 rounded-full bg-white text-slate-900 hover:bg-indigo-500 hover:text-white transition-all shadow-lg active:scale-90"
+                        >
+                          <Edit className="w-5 h-5" />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(prodotto.id)}
+                          className="p-3 rounded-full bg-white text-slate-900 hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-90"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
 
-              {/* Product Info */}
-              <div className="p-5 flex-1 flex flex-col">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
-                    {prodotto.sku}
-                  </div>
-                  <div className="font-bold text-slate-900 text-sm">
-                    {formatEuro(prodotto.prezzoUnitario)}
-                  </div>
-                </div>
-                
-                <h3 className="text-sm font-semibold text-slate-800 line-clamp-2 min-h-[2.5rem] mb-4">
-                  {prodotto.descrizione}
-                </h3>
+                    {/* Product Info */}
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+                          {prodotto.sku}
+                        </div>
+                        <div className="font-bold text-slate-900 text-sm">
+                          {formatEuro(prodotto.prezzoUnitario)}
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-sm font-semibold text-slate-800 line-clamp-2 min-h-[2.5rem] mb-4">
+                        {prodotto.descrizione}
+                      </h3>
 
-                <div className="mt-auto space-y-2">
-                  <div className="flex flex-wrap gap-1">
-                    {prodotto.taglie.slice(0, 4).map(t => (
-                      <span key={t} className="text-[9px] font-bold border border-slate-200 px-1.5 py-0.5 rounded text-slate-500">
-                        {t}
-                      </span>
-                    ))}
-                    {prodotto.taglie.length > 4 && <span className="text-[9px] text-slate-400">+{prodotto.taglie.length - 4}</span>}
+                      <div className="mt-auto space-y-2">
+                        <div className="flex flex-wrap gap-1">
+                          {prodotto.taglie.slice(0, 4).map(t => (
+                            <span key={t} className="text-[9px] font-bold border border-slate-200 px-1.5 py-0.5 rounded text-slate-500">
+                              {t}
+                            </span>
+                          ))}
+                          {prodotto.taglie.length > 4 && <span className="text-[9px] text-slate-400">+{prodotto.taglie.length - 4}</span>}
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {prodotto.colori.slice(0, 3).map(c => (
+                            <span key={c} className="text-[9px] font-bold bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 uppercase">
+                              {c}
+                            </span>
+                          ))}
+                          {prodotto.colori.length > 3 && <span className="text-[9px] text-slate-400">+{prodotto.colori.length - 3}</span>}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-1">
-                    {prodotto.colori.slice(0, 3).map(c => (
-                      <span key={c} className="text-[9px] font-bold bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 uppercase">
-                        {c}
-                      </span>
-                    ))}
-                    {prodotto.colori.length > 3 && <span className="text-[9px] text-slate-400">+{prodotto.colori.length - 3}</span>}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           ))}

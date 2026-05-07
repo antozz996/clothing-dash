@@ -19,6 +19,9 @@ export async function GET(request: Request) {
           { descrizione: { contains: search } },
         ],
       },
+      include: {
+        categoria: true
+      },
       orderBy: { sku: 'asc' },
     })
 
@@ -52,10 +55,11 @@ export async function POST(request: Request) {
       data: {
         sku: data.sku,
         descrizione: data.descrizione,
-        prezzoUnitario: parseFloat(data.prezzoUnitario),
+        prezzoUnitario: Number(data.prezzoUnitario),
         taglie: JSON.stringify(data.taglie || []),
         colori: JSON.stringify(data.colori || []),
         fotoUrl: data.fotoUrl,
+        categoriaId: data.categoriaId || null,
       },
     })
 

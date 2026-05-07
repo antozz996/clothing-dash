@@ -93,9 +93,9 @@ export default function ClientiPage() {
       {/* Table Section */}
       <div className="card overflow-hidden bg-white shadow-md ring-1 ring-slate-200 rounded-2xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
+          <table className="w-full text-sm text-left whitespace-nowrap">
+            <thead className="text-xs text-slate-500 bg-slate-50 uppercase font-semibold border-b border-slate-200">
+              <tr>
                 <th className="py-4 px-6 font-semibold text-slate-700">Ragione Sociale</th>
                 <th className="py-4 px-6 font-semibold text-slate-700">Contatti</th>
                 <th className="py-4 px-6 font-semibold text-slate-700">Località</th>

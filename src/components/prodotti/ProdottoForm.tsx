@@ -20,6 +20,7 @@ const prodottoSchema = z.object({
   taglie: z.array(z.string()).min(1, 'Inserisci almeno una taglia'),
   colori: z.array(z.string()).min(1, 'Inserisci almeno un colore'),
   fotoUrl: z.string().optional().or(z.literal('')),
+  categoriaId: z.string().optional().or(z.literal('')),
 })
 
 type ProdottoForm = z.infer<typeof prodottoSchema>
@@ -29,6 +30,7 @@ export default function ProdottoForm({ params }: { params?: { id?: string } }) {
   const isEdit = !!params?.id
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(isEdit)
+  const [categorie, setCategorie] = useState<any[]>([])
   const [newTaglia, setNewTaglia] = useState('')
   const [newColore, setNewColore] = useState('')
 
@@ -44,6 +46,7 @@ export default function ProdottoForm({ params }: { params?: { id?: string } }) {
     defaultValues: {
       taglie: [],
       colori: [],
+      categoriaId: '',
     }
   })
 
@@ -51,31 +54,38 @@ export default function ProdottoForm({ params }: { params?: { id?: string } }) {
   const colori = watch('colori') || []
 
   useEffect(() => {
-    if (isEdit && params?.id) {
-      fetchProdotto()
-    }
-  }, [isEdit, params?.id])
+    const fetchData = async () => {
+      try {
+        const catRes = await fetch('/api/categorie')
+        if (catRes.ok) setCategorie(await catRes.json())
 
-  const fetchProdotto = async () => {
-    try {
-      const res = await fetch(`/api/prodotti/${params?.id}`)
-      if (res.ok) {
-        const data = await res.json()
-        reset(data)
-      } else {
-        router.push('/prodotti')
+        if (isEdit && params?.id) {
+          const res = await fetch(`/api/prodotti/${params?.id}`)
+          if (res.ok) {
+            const data = await res.json()
+            reset({
+              ...data,
+              taglie: typeof data.taglie === 'string' ? JSON.parse(data.taglie) : data.taglie,
+              colori: typeof data.colori === 'string' ? JSON.parse(data.colori) : data.colori,
+              categoriaId: data.categoriaId || ''
+            })
+          } else {
+            router.push('/prodotti')
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      } finally {
+        setFetching(false)
       }
-    } catch (error) {
-      console.error('Error fetching prodotto:', error)
-    } finally {
-      setFetching(false)
     }
-  }
+    fetchData()
+  }, [isEdit, params?.id, reset, router])
 
   const onSubmit = async (data: ProdottoForm) => {
     setLoading(true)
     try {
-      const url = isEdit ? `/api/prodotti/${params.id}` : '/api/prodotti'
+      const url = isEdit ? `/api/prodotti/${params!.id}` : '/api/prodotti'
       const method = isEdit ? 'PATCH' : 'POST'
       
       const res = await fetch(url, {
@@ -207,6 +217,19 @@ export default function ProdottoForm({ params }: { params?: { id?: string } }) {
                 placeholder="Descrizione dettagliata del capo d'abbigliamento..."
               />
               {errors.descrizione && <p className="text-xs text-red-500 mt-1 ml-1 font-inter">{errors.descrizione.message}</p>}
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 ml-1">Macro Categoria / Stagionalità</label>
+              <select
+                {...register('categoriaId')}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white transition-all focus:border-indigo-500"
+              >
+                <option value="">Nessuna Categoria</option>
+                {categorie.map(c => (
+                  <option key={c.id} value={c.id}>{c.nome}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

@@ -53,6 +53,12 @@ export async function POST(request: Request) {
         email: data.email,
         telefono: data.telefono,
         note: data.note,
+        pec: data.pec,
+        codiceUnivoco: data.codiceUnivoco,
+        indirizzoSpedizione: data.indirizzoSpedizione,
+        cittaSpedizione: data.cittaSpedizione,
+        capSpedizione: data.capSpedizione,
+        provinciaSpedizione: data.provinciaSpedizione,
       },
     })
 

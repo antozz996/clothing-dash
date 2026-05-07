@@ -12,6 +12,7 @@ export async function GET(
   try {
     const prodotto = await prisma.prodotto.findUnique({
       where: { id: params.id },
+      include: { categoria: true }
     })
 
     if (!prodotto) {
@@ -44,11 +45,12 @@ export async function PATCH(
       data: {
         sku: data.sku,
         descrizione: data.descrizione,
-        prezzoUnitario: data.prezzoUnitario !== undefined ? parseFloat(data.prezzoUnitario) : undefined,
+        prezzoUnitario: data.prezzoUnitario ? Number(data.prezzoUnitario) : undefined,
         taglie: data.taglie ? JSON.stringify(data.taglie) : undefined,
         colori: data.colori ? JSON.stringify(data.colori) : undefined,
         fotoUrl: data.fotoUrl,
         attivo: data.attivo,
+        categoriaId: data.categoriaId !== undefined ? (data.categoriaId || null) : undefined,
       },
     })
 

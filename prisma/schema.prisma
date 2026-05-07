@@ -38,6 +38,8 @@ model Cliente {
   capSpedizione       String? @map("cap_spedizione")
   cittaSpedizione     String? @map("citta_spedizione")
   provinciaSpedizione String? @map("provincia_spedizione")
+  pec             String?
+  codiceUnivoco   String? @map("codice_univoco")
   note            String?
   attivo          Boolean  @default(true)
   createdAt       DateTime @default(now()) @map("created_at")
@@ -46,6 +48,18 @@ model Cliente {
   ddt    Ddt[]
 
   @@map("clienti")
+}
+
+// ─── Categorie (Macro Categorie / Stagionalità) ─────────────────
+model Categoria {
+  id          String   @id @default(uuid())
+  nome        String   @unique
+  descrizione String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  prodotti    Prodotto[]
+
+  @@map("categorie")
 }
 
 // ─── Catalogo Prodotti ──────────────────────────────────────────
@@ -59,8 +73,10 @@ model Prodotto {
   fotoUrl         String?  @map("foto_url")
   attivo          Boolean  @default(true)
   createdAt       DateTime @default(now()) @map("created_at")
+  categoriaId     String?  @map("categoria_id")
 
-  righeGriglia RigaGriglia[]
+  categoria       Categoria? @relation(fields: [categoriaId], references: [id])
+  righeGriglia    RigaGriglia[]
 
   @@map("prodotti")
 }

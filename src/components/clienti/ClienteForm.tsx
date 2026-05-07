@@ -18,7 +18,8 @@ const clienteSchema = z.object({
   piva: z.string().optional().or(z.literal('')),
   cf: z.string().optional().or(z.literal('')),
   email: z.string().email('Email non valida').optional().or(z.literal('')),
-  telefono: z.string().optional().or(z.literal('')),
+  pec: z.string().email('PEC non valida').optional().or(z.literal('')),
+  codiceUnivoco: z.string().optional().or(z.literal('')),
   indirizzoSpedizione: z.string().optional().or(z.literal('')),
   capSpedizione: z.string().optional().or(z.literal('')),
   cittaSpedizione: z.string().optional().or(z.literal('')),
@@ -56,7 +57,11 @@ export default function ClienteForm({ params }: { params?: { id?: string } }) {
       const res = await fetch(`/api/clienti/${params?.id}`)
       if (res.ok) {
         const data = await res.json()
-        reset(data)
+        reset({
+          ...data,
+          pec: data.pec || '',
+          codiceUnivoco: data.codiceUnivoco || '',
+        })
       } else {
         router.push('/clienti')
       }
@@ -158,6 +163,25 @@ export default function ClienteForm({ params }: { params?: { id?: string } }) {
                 {...register('cf')}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white transition-all focus:border-indigo-500"
                 placeholder="ABCXYZ00A01H000X"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 ml-1">PEC</label>
+              <input
+                {...register('pec')}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white transition-all focus:border-indigo-500"
+                placeholder="amministrazione@pec.it"
+              />
+              {errors.pec && <p className="text-xs text-red-500 mt-1 ml-1">{errors.pec.message}</p>}
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 ml-1">Codice Univoco (SDI)</label>
+              <input
+                {...register('codiceUnivoco')}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white transition-all focus:border-indigo-500 uppercase"
+                placeholder="XXXXXXX"
               />
             </div>
           </div>
