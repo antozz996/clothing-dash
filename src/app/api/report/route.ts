@@ -43,6 +43,7 @@ export async function GET(request: Request) {
     const righe = await prisma.rigaGriglia.findMany({
       where,
       include: {
+        prodotto: true,
         ordine: {
           include: {
             cliente: true
@@ -70,7 +71,7 @@ export async function GET(request: Request) {
           taglia: r.taglia,
           quantita: 0,
           valore: 0,
-          fotoUrl: r.fotoUrl
+          fotoUrl: r.prodotto?.fotoUrl || r.fotoUrl
         }
       }
       aggregazioneProdotto[pKey].quantita += r.quantita
