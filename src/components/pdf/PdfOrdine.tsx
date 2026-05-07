@@ -1,6 +1,7 @@
 import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer'
 import { formatData, formatEuro } from '@/lib/calcoli'
 import React from 'react'
+import CondizioniGeneraliPage from './CondizioniGeneraliPage'
 
 const styles = StyleSheet.create({
   page: {
@@ -441,6 +442,7 @@ export default function PdfOrdine({ ordine }: Props) {
           `Pagina ${pageNumber} di ${totalPages}`
         )} fixed />
       </Page>
+      <CondizioniGeneraliPage />
     </Document>
   )
 }
