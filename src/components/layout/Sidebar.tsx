@@ -12,6 +12,7 @@ import {
   BarChart3,
   ChevronLeft,
   Menu,
+  LogOut,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -31,6 +32,15 @@ interface SidebarProps {
 
 export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
   const pathname = usePathname()
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      window.location.href = '/login'
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   return (
     <>
@@ -117,8 +127,20 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
           })}
         </nav>
 
-        {/* Footer — Collapse toggle */}
-        <div className="p-3 border-t border-white/10">
+        {/* Footer — Logout & Collapse Section */}
+        <div className="p-3 border-t border-white/10 space-y-1">
+          <button
+            onClick={handleLogout}
+            className={cn(
+              'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium',
+              'text-red-400 hover:text-white hover:bg-red-500/15 transition-all duration-200',
+              collapsed && 'justify-center px-2'
+            )}
+          >
+            <LogOut className="w-5 h-5 flex-shrink-0" />
+            {!collapsed && <span className="animate-fade-in">Log out</span>}
+          </button>
+
           <button
             onClick={() => setCollapsed(!collapsed)}
             className={cn(
