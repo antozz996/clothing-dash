@@ -189,8 +189,8 @@ export default function GrigliaTaglieEditor({ data, onChange, prodottiDisponibil
                 </div>
               </div>
 
-              {/* Grid Body */}
-              <div className="p-6 overflow-x-auto">
+              {/* Grid Body - Desktop Table */}
+              <div className="hidden md:block p-6 overflow-x-auto">
                 <table className="w-full min-w-[500px]">
                   <thead>
                     <tr>
@@ -247,6 +247,68 @@ export default function GrigliaTaglieEditor({ data, onChange, prodottiDisponibil
                     })}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Grid Body - Mobile View */}
+              <div className="block md:hidden p-4 border-t border-slate-100 space-y-6">
+                {prodotto.colori.map(col => {
+                  let totCol = 0
+                  Object.values(matrix[col]).forEach(q => totCol += q)
+
+                  return (
+                    <div key={col} className="space-y-3">
+                      {/* Color Header */}
+                      <div className="flex items-center justify-between bg-slate-50/80 px-3 py-2 rounded-xl border border-slate-100">
+                        <span className="text-xs font-black text-indigo-600 uppercase">{col}</span>
+                        <span className="text-xs font-bold text-slate-500 bg-white border border-slate-100 px-2.5 py-0.5 rounded-lg shadow-sm">
+                          Tot. Colore: <span className="text-slate-950 font-black">{totCol}</span>
+                        </span>
+                      </div>
+
+                      {/* Sizes List */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {prodotto.taglie.map(tag => (
+                          <div 
+                            key={tag} 
+                            className={cn(
+                              "flex items-center justify-between p-3 rounded-2xl border transition-all",
+                              matrix[col][tag] > 0 
+                                ? "bg-indigo-50/40 border-indigo-200" 
+                                : "bg-white border-slate-150"
+                            )}
+                          >
+                            <span className="text-xs font-black text-slate-700 bg-white px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-sm">{tag}</span>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                disabled={readOnly}
+                                onClick={() => updateQty(id, col, tag, (matrix[col][tag] || 0) - 1)}
+                                className="w-10 h-10 rounded-xl border border-slate-200 bg-white flex items-center justify-center text-slate-600 font-extrabold text-base hover:bg-slate-50 active:scale-95 disabled:opacity-50 select-none shadow-sm"
+                              >
+                                -
+                              </button>
+                              <input
+                                type="number"
+                                disabled={readOnly}
+                                value={matrix[col][tag] || ''}
+                                onChange={(e) => updateQty(id, col, tag, parseInt(e.target.value) || 0)}
+                                className="w-12 h-10 text-center text-sm font-black bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 shadow-inner"
+                              />
+                              <button
+                                type="button"
+                                disabled={readOnly}
+                                onClick={() => updateQty(id, col, tag, (matrix[col][tag] || 0) + 1)}
+                                className="w-10 h-10 rounded-xl border border-slate-200 bg-white flex items-center justify-center text-slate-600 font-extrabold text-base hover:bg-slate-50 active:scale-95 disabled:opacity-50 select-none shadow-sm"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           )

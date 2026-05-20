@@ -111,8 +111,8 @@ export default function OrdiniPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="card overflow-hidden bg-white shadow-md ring-1 ring-slate-200 rounded-2xl">
+      {/* Table - Desktop View */}
+      <div className="hidden md:block card overflow-hidden bg-white shadow-md ring-1 ring-slate-200 rounded-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left whitespace-nowrap">
             <thead className="text-xs text-slate-500 bg-slate-50 uppercase font-semibold border-b border-slate-200">
@@ -208,6 +208,94 @@ export default function OrdiniPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Card-Based List */}
+      <div className="block md:hidden space-y-4">
+        {loading ? (
+          [1, 2, 3].map(i => (
+            <div key={i} className="card p-5 bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl animate-pulse space-y-3">
+              <div className="h-4 bg-slate-100 rounded w-1/3" />
+              <div className="h-4 bg-slate-100 rounded w-2/3" />
+              <div className="h-4 bg-slate-100 rounded w-1/2" />
+            </div>
+          ))
+        ) : ordini.length > 0 ? (
+          ordini.map((ord) => (
+            <div key={ord.id} className="card p-5 bg-white shadow-md ring-1 ring-slate-200 rounded-2xl space-y-4 font-inter">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Documento</span>
+                  <p className="text-sm font-black text-slate-900 mt-0.5">{ord.numeroDocumento}</p>
+                </div>
+                <span className={cn(
+                  "px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                  getStatusStyle(ord.stato)
+                )}>
+                  {ord.stato}
+                </span>
+              </div>
+
+              {/* Customer */}
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Cliente</span>
+                <p className="text-xs font-bold text-slate-700 line-clamp-1">{ord.cliente.ragioneSociale}</p>
+              </div>
+
+              {/* Date & Totals */}
+              <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <div>
+                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest block">Data</span>
+                  <span className="text-[10px] font-bold text-slate-700 mt-0.5 block">{formatData(ord.dataOrdine)}</span>
+                </div>
+                <div className="text-center">
+                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest block">Capi</span>
+                  <span className="text-[10px] font-black text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200 mt-0.5 inline-block">{ord.totaleCapi}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest block">Tot. Ivato</span>
+                  <span className="text-[10px] font-black text-indigo-600 mt-0.5 block">{formatEuro(ord.totaleIvato)}</span>
+                </div>
+              </div>
+
+              {/* Actions Footer */}
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+                <Link
+                  href={`/ordini/${ord.id}`}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 active:bg-slate-100 transition-colors"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Vedi</span>
+                </Link>
+                
+                <a
+                  href={`/api/ordini/${ord.id}/pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 active:bg-slate-100 transition-colors"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Stampa</span>
+                </a>
+
+                {(ord.stato === 'confermato' || ord.stato === 'spedito') && (
+                  <Link
+                    href={`/ddt/nuovo?orderId=${ord.id}`}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 shadow-sm transition-all"
+                  >
+                    <Truck className="w-3.5 h-3.5" />
+                    <span>DDT</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="p-12 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl">
+            <p className="text-xs text-slate-400 font-medium">Nessun ordine trovato.</p>
+          </div>
+        )}
       </div>
     </div>
   )

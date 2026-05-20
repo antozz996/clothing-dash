@@ -192,7 +192,7 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in pb-20">
+    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in pb-28 lg:pb-20 px-4 md:px-0">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link
@@ -360,6 +360,48 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
             )}>
               Stato: {stato.toUpperCase()}
             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Sticky Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-slate-200 p-4 block lg:hidden shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+        <div className="flex items-center justify-between">
+          <div className="text-left font-inter">
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Totale Ivato</p>
+            <p className="text-lg font-black text-indigo-600">{formatEuro(totali.totaleIvato)}</p>
+            <p className="text-[10px] text-slate-500 font-medium mt-0.5">{totali.totCapi} Capi</p>
+          </div>
+          <div className="flex gap-2">
+            {!isReadOnly ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onSubmit('bozza')}
+                  disabled={loading}
+                  className="px-3 py-2 text-xs font-bold rounded-xl border border-slate-100 text-slate-600 bg-white active:bg-slate-50"
+                >
+                  Bozza
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSubmit('confermato')}
+                  disabled={loading}
+                  className="px-4 py-2 text-xs font-bold rounded-xl text-white bg-indigo-600 shadow-md hover:bg-indigo-700 hover:shadow-indigo-200 active:scale-95"
+                >
+                  Conferma
+                </button>
+              </>
+            ) : (
+              <a
+                href={`/api/ordini/${params?.id}/pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 text-xs font-bold rounded-xl text-white bg-slate-900 shadow-md active:scale-95"
+              >
+                PDF
+              </a>
+            )}
           </div>
         </div>
       </div>

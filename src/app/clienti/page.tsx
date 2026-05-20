@@ -90,8 +90,8 @@ export default function ClientiPage() {
         </div>
       </div>
 
-      {/* Table Section */}
-      <div className="card overflow-hidden bg-white shadow-md ring-1 ring-slate-200 rounded-2xl">
+      {/* Table Section - Desktop View */}
+      <div className="hidden md:block card overflow-hidden bg-white shadow-md ring-1 ring-slate-200 rounded-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left whitespace-nowrap">
             <thead className="text-xs text-slate-500 bg-slate-50 uppercase font-semibold border-b border-slate-200">
@@ -201,6 +201,109 @@ export default function ClientiPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Card-Based List */}
+      <div className="block md:hidden space-y-4 pb-12">
+        {loading ? (
+          [1, 2, 3].map((i) => (
+            <div key={i} className="card p-5 bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl animate-pulse space-y-3">
+              <div className="h-4 bg-slate-100 rounded w-1/2" />
+              <div className="h-4 bg-slate-100 rounded w-2/3" />
+              <div className="h-4 bg-slate-100 rounded w-1/3" />
+            </div>
+          ))
+        ) : clienti.length > 0 ? (
+          clienti.map((cliente) => (
+            <div key={cliente.id} className="card p-5 bg-white shadow-md ring-1 ring-slate-200 rounded-2xl space-y-4 font-inter">
+              {/* Header with name and P.IVA */}
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Ragione Sociale</span>
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="text-base font-black text-slate-900 leading-tight">{cliente.ragioneSociale}</h3>
+                  <code className="shrink-0 text-[9px] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md font-mono text-slate-600 font-bold">
+                    {cliente.piva || 'N/D'}
+                  </code>
+                </div>
+              </div>
+
+              {/* Location Block */}
+              {(cliente.indirizzo || cliente.citta) && (
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Sede e Spedizione</span>
+                  <div className="flex items-start gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs text-slate-600">
+                    <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                    <div>
+                      {cliente.indirizzo && <p className="font-bold text-slate-700">{cliente.indirizzo}</p>}
+                      <p className="text-slate-500 mt-0.5">
+                        {cliente.cap} {cliente.citta} {cliente.provincia && `(${cliente.provincia})`}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Quick Contacts */}
+              {(cliente.telefono || cliente.email) && (
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Contatto Rapido</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {cliente.telefono ? (
+                      <a
+                        href={`tel:${cliente.telefono}`}
+                        className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200 active:bg-slate-100 active:scale-95 transition-all"
+                      >
+                        <Phone className="w-3.5 h-3.5 text-indigo-500" />
+                        <span>Chiama</span>
+                      </a>
+                    ) : (
+                      <div className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-slate-300 bg-slate-50 border border-slate-100 cursor-not-allowed">
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>Non Disp.</span>
+                      </div>
+                    )}
+                    {cliente.email ? (
+                      <a
+                        href={`mailto:${cliente.email}`}
+                        className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200 active:bg-slate-100 active:scale-95 transition-all"
+                      >
+                        <Mail className="w-3.5 h-3.5 text-indigo-500" />
+                        <span>Invia Email</span>
+                      </a>
+                    ) : (
+                      <div className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-slate-300 bg-slate-50 border border-slate-100 cursor-not-allowed">
+                        <Mail className="w-3.5 h-3.5" />
+                        <span>Non Disp.</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions Footer */}
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+                <Link
+                  href={`/clienti/${cliente.id}`}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 active:bg-slate-100 transition-colors"
+                >
+                  <Edit className="w-3.5 h-3.5" />
+                  <span>Modifica</span>
+                </Link>
+                <button
+                  onClick={() => handleDelete(cliente.id)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-red-600 bg-red-50 border border-red-100 active:bg-red-100 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Elimina</span>
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="p-12 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl">
+            <p className="text-xs text-slate-400 font-medium">Nessun cliente trovato.</p>
+          </div>
+        )}
       </div>
     </div>
   )
