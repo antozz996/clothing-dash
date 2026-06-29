@@ -71,6 +71,7 @@ export async function GET(request: Request) {
           taglia: r.taglia,
           quantita: 0,
           valore: 0,
+          prezzoUnitario: r.prezzoUnitario,
           fotoUrl: r.prodotto?.fotoUrl || r.fotoUrl
         }
       }

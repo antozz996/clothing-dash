@@ -12,13 +12,16 @@ import {
   TrendingUp, 
   PieChart, 
   Download,
-  Loader2
+  Loader2,
+  Printer
 } from 'lucide-react'
 import { formatEuro, formatData } from '@/lib/calcoli'
 import { cn } from '@/lib/utils'
+import LabelPrintModal from '@/components/report/LabelPrintModal'
 
 export default function ReportPage() {
   const [loading, setLoading] = useState(true)
+  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false)
   const [data, setData] = useState<any>(null)
   const [showFiltersMobile, setShowFiltersMobile] = useState(false)
   
@@ -94,6 +97,14 @@ export default function ReportPage() {
              <Download className="w-4 h-4" />
              Scarica PDF
            </a>
+           <button
+             onClick={() => setIsPrintModalOpen(true)}
+             disabled={!data?.perProdotto || data.perProdotto.length === 0}
+             className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl font-bold text-sm hover:bg-indigo-100 transition-all shadow-sm active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
+           >
+             <Printer className="w-4 h-4" />
+             Stampa Etichette
+           </button>
            <button 
              onClick={resetFilters}
              className="flex-1 sm:flex-none px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all"
@@ -435,6 +446,13 @@ export default function ReportPage() {
            </table>
         </div>
       </div>
+
+      {/* Modal di stampa etichette */}
+      <LabelPrintModal 
+        isOpen={isPrintModalOpen} 
+        onClose={() => setIsPrintModalOpen(false)} 
+        items={data?.perProdotto || []} 
+      />
     </div>
   )
 }
