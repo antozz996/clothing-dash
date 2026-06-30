@@ -420,6 +420,22 @@ export default function PdfOrdine({ ordine }: Props) {
               <Text style={[styles.addressText, { marginTop: 3, fontWeight: 'bold', textTransform: 'uppercase' }]}>
                  {ordine.metodoPagamento || 'Pagamento da concordare'}
               </Text>
+
+              {(ordine.scontoPercentuale > 0 || ordine.scontoEuro > 0) && (
+                <View style={{ marginTop: 5, borderTopWidth: 0.3, borderTopColor: '#ccc', paddingTop: 4 }}>
+                   <Text style={[styles.infoLabel, { marginBottom: 2 }]}>SCONTI APPLICATI</Text>
+                   {ordine.scontoPercentuale > 0 && (
+                      <Text style={[styles.addressText, { fontSize: 7, fontWeight: 'bold', color: '#b45309' }]}>
+                         Sconto articolo: {ordine.scontoPercentuale}%
+                      </Text>
+                   )}
+                   {ordine.scontoEuro > 0 && (
+                      <Text style={[styles.addressText, { fontSize: 7, fontWeight: 'bold', color: '#b45309' }]}>
+                         Sconto fisso: {formatEuro(ordine.scontoEuro)}
+                      </Text>
+                   )}
+                </View>
+              )}
               
               {ordine.note ? (
                 <View style={{ marginTop: 6, borderTopWidth: 0.3, borderTopColor: '#000', paddingTop: 4 }}>
@@ -439,29 +455,7 @@ export default function PdfOrdine({ ordine }: Props) {
                  <Text style={styles.infoValue}>{totaliDettagliati.totaleCapi}</Text>
               </View>
               <View style={styles.totalRow}>
-                 <Text style={styles.infoLabel}>VALORE MERCE</Text>
-                 <Text style={styles.infoValue}>{formatEuro(totaliDettagliati.imponibileOriginale)}</Text>
-              </View>
-              {totaliDettagliati.scontoPercentualeValore > 0 && (
-                 <View style={styles.totalRow}>
-                    <Text style={[styles.infoLabel, { color: '#b45309' }]}>SCONTO ARTICOLO ({ordine.scontoPercentuale}%)</Text>
-                    <Text style={[styles.infoValue, { color: '#b45309' }]}>-{formatEuro(totaliDettagliati.scontoPercentualeValore)}</Text>
-                 </View>
-              )}
-              {totaliDettagliati.scontoEuroValore > 0 && (
-                 <View style={styles.totalRow}>
-                    <Text style={[styles.infoLabel, { color: '#b45309' }]}>SCONTO FISSO</Text>
-                    <Text style={[styles.infoValue, { color: '#b45309' }]}>-{formatEuro(totaliDettagliati.scontoEuroValore)}</Text>
-                 </View>
-              )}
-              {totaliDettagliati.scontoPagamentoValore > 0 && (
-                 <View style={styles.totalRow}>
-                    <Text style={[styles.infoLabel, { color: '#047857', fontWeight: 'bold' }]}>SCONTO PAGAMENTO (5%)</Text>
-                    <Text style={[styles.infoValue, { color: '#047857', fontWeight: 'bold' }]}>-{formatEuro(totaliDettagliati.scontoPagamentoValore)}</Text>
-                 </View>
-              )}
-              <View style={styles.totalRow}>
-                 <Text style={styles.infoLabel}>IMPONIBILE SCONTATO</Text>
+                 <Text style={styles.infoLabel}>IMPONIBILE</Text>
                  <Text style={styles.infoValue}>{formatEuro(totaliDettagliati.imponibile)}</Text>
               </View>
               <View style={styles.totalRow}>
