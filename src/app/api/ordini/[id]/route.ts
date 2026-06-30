@@ -53,7 +53,12 @@ export async function PATCH(
     }
 
     // Calcolo nuovi totali
-    const totali = calcolaTotaliOrdine(data.righe)
+    const totali = calcolaTotaliOrdine(
+      data.righe,
+      data.scontoPercentuale || 0,
+      data.scontoEuro || 0,
+      data.metodoPagamento || 'Pagamento da concordare'
+    )
 
     // Aggiornamento atomico: elimina vecchie righe e metti le nuove
     const ordineAggiornato = await prisma.$transaction(async (tx) => {
@@ -67,6 +72,9 @@ export async function PATCH(
         where: { id: params.id },
         data: {
           note: data.note,
+          metodoPagamento: data.metodoPagamento || 'Pagamento da concordare',
+          scontoPercentuale: data.scontoPercentuale || 0,
+          scontoEuro: data.scontoEuro || 0,
           imponibile: totali.imponibile,
           iva: totali.iva,
           totaleIvato: totali.totaleIvato,

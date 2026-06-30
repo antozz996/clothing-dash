@@ -52,7 +52,12 @@ export async function POST(request: Request) {
     const { progressivo, numeroDocumento } = await getNextProgressivo('ORD')
 
     // 2. Calcola totali
-    const totali = calcolaTotaliOrdine(data.righe)
+    const totali = calcolaTotaliOrdine(
+      data.righe,
+      data.scontoPercentuale || 0,
+      data.scontoEuro || 0,
+      data.metodoPagamento || 'Pagamento da concordare'
+    )
 
     // 3. Crea ordine e righe in transazione
     const nuovoOrdine = await prisma.ordine.create({
@@ -63,6 +68,9 @@ export async function POST(request: Request) {
         clienteId: data.clienteId,
         stato: data.stato || 'bozza',
         note: data.note,
+        metodoPagamento: data.metodoPagamento || 'Pagamento da concordare',
+        scontoPercentuale: data.scontoPercentuale || 0,
+        scontoEuro: data.scontoEuro || 0,
         imponibile: totali.imponibile,
         iva: totali.iva,
         totaleIvato: totali.totaleIvato,

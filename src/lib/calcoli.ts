@@ -10,6 +10,10 @@ export interface RigaCalcolo {
 
 export interface TotaliOrdine {
   totaleCapi: number
+  imponibileOriginale: number
+  scontoPercentualeValore: number
+  scontoEuroValore: number
+  scontoPagamentoValore: number
   imponibile: number
   iva: number
   totaleIvato: number
@@ -18,23 +22,52 @@ export interface TotaliOrdine {
 const ALIQUOTA_IVA = 0.22
 
 /**
- * Calcola i totali di un ordine a partire dalle righe griglia.
+ * Calcola i totali di un ordine a partire dalle righe griglia e dagli sconti.
  */
-export function calcolaTotaliOrdine(righe: RigaCalcolo[]): TotaliOrdine {
+export function calcolaTotaliOrdine(
+  righe: RigaCalcolo[],
+  scontoPercentuale = 0,
+  scontoEuro = 0,
+  metodoPagamento = ''
+): TotaliOrdine {
   let totaleCapi = 0
-  let imponibile = 0
+  let imponibileOriginale = 0
 
   for (const riga of righe) {
     totaleCapi += riga.quantita
-    imponibile += riga.quantita * riga.prezzoUnitario
+    imponibileOriginale += riga.quantita * riga.prezzoUnitario
   }
 
-  // Arrotondamento a 2 decimali
-  imponibile = Math.round(imponibile * 100) / 100
+  // 1. Sconto percentuale
+  const scontoPercentualeValore = Math.round(imponibileOriginale * (scontoPercentuale / 100) * 100) / 100
+  let imp = imponibileOriginale - scontoPercentualeValore
+
+  // 2. Sconto euro
+  const scontoEuroValore = Math.round(scontoEuro * 100) / 100
+  imp = imp - scontoEuroValore
+
+  // 3. Sconto pagamento (5% per "Bonifico anticipato")
+  let scontoPagamentoValore = 0
+  if (metodoPagamento === 'Bonifico anticipato') {
+    scontoPagamentoValore = Math.round(imp * 0.05 * 100) / 100
+    imp = imp - scontoPagamentoValore
+  }
+
+  // Imponibile finale (non negativo)
+  const imponibile = Math.max(0, Math.round(imp * 100) / 100)
   const iva = Math.round(imponibile * ALIQUOTA_IVA * 100) / 100
   const totaleIvato = Math.round((imponibile + iva) * 100) / 100
 
-  return { totaleCapi, imponibile, iva, totaleIvato }
+  return {
+    totaleCapi,
+    imponibileOriginale,
+    scontoPercentualeValore,
+    scontoEuroValore,
+    scontoPagamentoValore,
+    imponibile,
+    iva,
+    totaleIvato
+  }
 }
 
 /**

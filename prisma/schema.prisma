@@ -91,6 +91,9 @@ model Ordine {
   dataOrdine        DateTime @default(now()) @map("data_ordine")
   stato             String   @default("bozza") // bozza | confermato | spedito | annullato
   note              String?
+  metodoPagamento   String?  @default("Pagamento da concordare") @map("metodo_pagamento")
+  scontoPercentuale Float    @default(0) @map("sconto_percentuale")
+  scontoEuro        Float    @default(0) @map("sconto_euro")
   imponibile        Float    @default(0)
   iva               Float    @default(0)
   totaleIvato       Float    @default(0) @map("totale_ivato")

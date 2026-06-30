@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Save, Loader2, Calendar, User, FileText, CheckCircle2, XCircle, Printer } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { formatEuro } from '@/lib/calcoli'
+import { formatEuro, calcolaTotaliOrdine } from '@/lib/calcoli'
 import GrigliaTaglieEditor from './GrigliaTaglieEditor'
 
 interface Cliente {
@@ -49,6 +49,9 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
   const [note, setNote] = useState('')
   const [dataGrid, setDataGrid] = useState<GridState>({})
   const [stato, setStato] = useState('bozza')
+  const [metodoPagamento, setMetodoPagamento] = useState('Pagamento da concordare')
+  const [scontoPercentuale, setScontoPercentuale] = useState(0)
+  const [scontoEuro, setScontoEuro] = useState(0)
 
   useEffect(() => {
     fetchInitialData()
@@ -72,6 +75,9 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
         setClienteId(dataO.clienteId)
         setNote(dataO.note || '')
         setStato(dataO.stato)
+        setMetodoPagamento(dataO.metodoPagamento || 'Pagamento da concordare')
+        setScontoPercentuale(dataO.scontoPercentuale || 0)
+        setScontoEuro(dataO.scontoEuro || 0)
         
         // Ricostruisci GridState dalle righe flat piatte del DB
         const reconstructedGrid: GridState = {}
@@ -106,23 +112,19 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
 
   // Calcolo totali real-time
   const totali = useMemo(() => {
-    let totCapi = 0
-    let imponibile = 0
-    
+    const flatRighe: { quantita: number; prezzoUnitario: number }[] = []
     Object.entries(dataGrid).forEach(([pid, item]) => {
       Object.values(item.matrix).forEach(row => {
         Object.values(row).forEach(qty => {
-          totCapi += qty
-          imponibile += qty * item.prodotto.prezzoUnitario
+          if (qty > 0) {
+            flatRighe.push({ quantita: qty, prezzoUnitario: item.prodotto.prezzoUnitario })
+          }
         })
       })
     })
 
-    const iva = Math.round(imponibile * 0.22 * 100) / 100
-    const totaleIvato = imponibile + iva
-
-    return { totCapi, imponibile, iva, totaleIvato }
-  }, [dataGrid])
+    return calcolaTotaliOrdine(flatRighe, scontoPercentuale, scontoEuro, metodoPagamento)
+  }, [dataGrid, scontoPercentuale, scontoEuro, metodoPagamento])
 
   const onSubmit = async (statusOverride?: string) => {
     if (!clienteId) return alert('Seleziona un cliente')
@@ -162,6 +164,9 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
           clienteId,
           note,
           stato: statusOverride || stato,
+          metodoPagamento,
+          scontoPercentuale,
+          scontoEuro,
           righe: flatRighe
         }),
       })
@@ -254,6 +259,62 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
                 </div>
               </div>
 
+              <div className="space-y-1.5 font-inter">
+                <label className="text-xs font-bold text-slate-500 ml-1">Metodo di Pagamento</label>
+                <select
+                  disabled={isReadOnly}
+                  value={metodoPagamento}
+                  onChange={(e) => setMetodoPagamento(e.target.value)}
+                  className={cn(
+                    "w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 transition-all font-inter text-sm font-bold text-slate-700",
+                    !isReadOnly && "focus:bg-white focus:border-indigo-500",
+                    isReadOnly && "opacity-70 cursor-not-allowed"
+                  )}
+                >
+                  <option value="Pagamento da concordare">Pagamento da concordare</option>
+                  <option value="Bonifico anticipato">Bonifico anticipato (Sconto 5% autom.)</option>
+                  <option value="Contrassegno 60/90 FM">Contrassegno 60/90 FM</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 font-inter">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-500 ml-1">Sconto Percentuale (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="any"
+                    disabled={isReadOnly}
+                    value={scontoPercentuale || ''}
+                    onChange={(e) => setScontoPercentuale(Math.max(0, parseFloat(e.target.value) || 0))}
+                    placeholder="0"
+                    className={cn(
+                      "w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 transition-all text-sm font-bold text-slate-700 focus:outline-none",
+                      !isReadOnly && "focus:bg-white focus:border-indigo-500",
+                      isReadOnly && "opacity-70 cursor-not-allowed"
+                    )}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-500 ml-1">Sconto Fisso (€)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    disabled={isReadOnly}
+                    value={scontoEuro || ''}
+                    onChange={(e) => setScontoEuro(Math.max(0, parseFloat(e.target.value) || 0))}
+                    placeholder="0.00"
+                    className={cn(
+                      "w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 transition-all text-sm font-bold text-slate-700 focus:outline-none",
+                      !isReadOnly && "focus:bg-white focus:border-indigo-500",
+                      isReadOnly && "opacity-70 cursor-not-allowed"
+                    )}
+                  />
+                </div>
+              </div>
+
               <div className="md:col-span-2 space-y-1.5 font-inter">
                 <label className="text-xs font-bold text-slate-500 ml-1">Note / Annotazioni</label>
                 <textarea
@@ -293,6 +354,28 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
                 <span className="font-bold text-slate-900">{totali.totCapi}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
+                <span className="text-slate-500 font-medium">Valore Merce</span>
+                <span className="font-bold text-slate-900">{formatEuro(totali.imponibileOriginale)}</span>
+              </div>
+              {totali.scontoPercentualeValore > 0 && (
+                <div className="flex justify-between items-center text-xs text-amber-600 font-semibold">
+                  <span>Sconto Articolo ({scontoPercentuale}%)</span>
+                  <span>-{formatEuro(totali.scontoPercentualeValore)}</span>
+                </div>
+              )}
+              {totali.scontoEuroValore > 0 && (
+                <div className="flex justify-between items-center text-xs text-amber-600 font-semibold">
+                  <span>Sconto Fisso</span>
+                  <span>-{formatEuro(totali.scontoEuroValore)}</span>
+                </div>
+              )}
+              {totali.scontoPagamentoValore > 0 && (
+                <div className="flex justify-between items-center text-xs text-emerald-600 font-bold">
+                  <span>Sconto Bonifico (5%)</span>
+                  <span>-{formatEuro(totali.scontoPagamentoValore)}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center text-sm pt-2 border-t border-slate-100">
                 <span className="text-slate-500 font-medium">Imponibile</span>
                 <span className="font-bold text-slate-900">{formatEuro(totali.imponibile)}</span>
               </div>

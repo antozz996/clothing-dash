@@ -1,5 +1,5 @@
 import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer'
-import { formatData, formatEuro } from '@/lib/calcoli'
+import { formatData, formatEuro, calcolaTotaliOrdine } from '@/lib/calcoli'
 import React from 'react'
 import CondizioniGeneraliPage from './CondizioniGeneraliPage'
 
@@ -248,8 +248,20 @@ interface Props {
 }
 
 export default function PdfOrdine({ ordine }: Props) {
+  // Calcola i totali dettagliati con sconti
+  const flatRighe = (ordine.righeGriglia || []).map((r: any) => ({
+    quantita: r.quantita,
+    prezzoUnitario: r.prezzoUnitario
+  }))
+  const totaliDettagliati = calcolaTotaliOrdine(
+    flatRighe,
+    ordine.scontoPercentuale || 0,
+    ordine.scontoEuro || 0,
+    ordine.metodoPagamento || ''
+  )
+
   // Raggruppa per Prodotto + Colore per avere una griglia dedicata per ogni variante
-  const groupedByProductAndColor = ordine.righeGriglia.reduce((acc: any, r: any) => {
+  const groupedByProductAndColor = (ordine.righeGriglia || []).reduce((acc: any, r: any) => {
     const key = `${r.prodottoId || r.sku}-${r.colore}`
     if (!acc[key]) {
       acc[key] = {
@@ -404,36 +416,61 @@ export default function PdfOrdine({ ordine }: Props) {
         {/* Riepilogo Finale */}
         <View style={styles.summarySection} wrap={false}>
            <View style={styles.notesBox}>
-              <Text style={styles.infoLabel}>NOTE / CONDIZIONI PAGAMENTO</Text>
-              <Text style={[styles.addressText, { marginTop: 5 }]}>{ordine.note || 'PAGAMENTO DA CONCORDARE'}</Text>
+              <Text style={styles.infoLabel}>CONDIZIONI PAGAMENTO</Text>
+              <Text style={[styles.addressText, { marginTop: 3, fontWeight: 'bold', textTransform: 'uppercase' }]}>
+                 {ordine.metodoPagamento || 'Pagamento da concordare'}
+              </Text>
               
-              <View style={{ marginTop: 25, flexDirection: 'row', justifyContent: 'space-around' }}>
-                 <View style={{ alignItems: 'center' }}>
-                    <Text style={{ fontSize: 5, marginBottom: 10 }}>Firma per Accettazione</Text>
-                    <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#000', width: 100 }} />
-                 </View>
-                 <View style={{ alignItems: 'center' }}>
-                    <Text style={{ fontSize: 5, marginBottom: 10 }}>Firma Vettore</Text>
-                    <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#000', width: 100 }} />
-                 </View>
+              {ordine.note ? (
+                <View style={{ marginTop: 6, borderTopWidth: 0.3, borderTopColor: '#000', paddingTop: 4 }}>
+                   <Text style={styles.infoLabel}>NOTE</Text>
+                   <Text style={[styles.addressText, { marginTop: 2 }]}>{ordine.note}</Text>
+                </View>
+              ) : null}
+              
+              <View style={{ marginTop: 25, alignItems: 'center' }}>
+                 <Text style={{ fontSize: 5, marginBottom: 10 }}>Firma Cliente</Text>
+                 <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#000', width: 120 }} />
               </View>
            </View>
            <View style={styles.totalsBox}>
               <View style={styles.totalRow}>
                  <Text style={styles.infoLabel}>TOTALE CAPI</Text>
-                 <Text style={styles.infoValue}>{ordine.totaleCapi}</Text>
+                 <Text style={styles.infoValue}>{totaliDettagliati.totaleCapi}</Text>
               </View>
               <View style={styles.totalRow}>
-                 <Text style={styles.infoLabel}>IMPONIBILE</Text>
-                 <Text style={styles.infoValue}>{formatEuro(ordine.imponibile)}</Text>
+                 <Text style={styles.infoLabel}>VALORE MERCE</Text>
+                 <Text style={styles.infoValue}>{formatEuro(totaliDettagliati.imponibileOriginale)}</Text>
+              </View>
+              {totaliDettagliati.scontoPercentualeValore > 0 && (
+                 <View style={styles.totalRow}>
+                    <Text style={[styles.infoLabel, { color: '#b45309' }]}>SCONTO ARTICOLO ({ordine.scontoPercentuale}%)</Text>
+                    <Text style={[styles.infoValue, { color: '#b45309' }]}>-{formatEuro(totaliDettagliati.scontoPercentualeValore)}</Text>
+                 </View>
+              )}
+              {totaliDettagliati.scontoEuroValore > 0 && (
+                 <View style={styles.totalRow}>
+                    <Text style={[styles.infoLabel, { color: '#b45309' }]}>SCONTO FISSO</Text>
+                    <Text style={[styles.infoValue, { color: '#b45309' }]}>-{formatEuro(totaliDettagliati.scontoEuroValore)}</Text>
+                 </View>
+              )}
+              {totaliDettagliati.scontoPagamentoValore > 0 && (
+                 <View style={styles.totalRow}>
+                    <Text style={[styles.infoLabel, { color: '#047857', fontWeight: 'bold' }]}>SCONTO PAGAMENTO (5%)</Text>
+                    <Text style={[styles.infoValue, { color: '#047857', fontWeight: 'bold' }]}>-{formatEuro(totaliDettagliati.scontoPagamentoValore)}</Text>
+                 </View>
+              )}
+              <View style={styles.totalRow}>
+                 <Text style={styles.infoLabel}>IMPONIBILE SCONTATO</Text>
+                 <Text style={styles.infoValue}>{formatEuro(totaliDettagliati.imponibile)}</Text>
               </View>
               <View style={styles.totalRow}>
                  <Text style={styles.infoLabel}>IVA 22%</Text>
-                 <Text style={styles.infoValue}>{formatEuro(ordine.iva)}</Text>
+                 <Text style={styles.infoValue}>{formatEuro(totaliDettagliati.iva)}</Text>
               </View>
               <View style={styles.totalFinal}>
                  <Text>TOTALE ORDINE</Text>
-                 <Text>{formatEuro(ordine.totaleIvato)}</Text>
+                 <Text>{formatEuro(totaliDettagliati.totaleIvato)}</Text>
               </View>
            </View>
         </View>
