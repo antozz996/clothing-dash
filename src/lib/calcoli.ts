@@ -46,12 +46,8 @@ export function calcolaTotaliOrdine(
   const scontoEuroValore = Math.round(scontoEuro * 100) / 100
   imp = imp - scontoEuroValore
 
-  // 3. Sconto pagamento (5% per "Bonifico anticipato")
-  let scontoPagamentoValore = 0
-  if (metodoPagamento === 'Bonifico anticipato') {
-    scontoPagamentoValore = Math.round(imp * 0.05 * 100) / 100
-    imp = imp - scontoPagamentoValore
-  }
+  // 3. Sconto pagamento (disattivato, non automatico)
+  const scontoPagamentoValore = 0
 
   // Imponibile finale (non negativo)
   const imponibile = Math.max(0, Math.round(imp * 100) / 100)

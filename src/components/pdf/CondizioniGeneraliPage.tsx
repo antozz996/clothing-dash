@@ -3,37 +3,38 @@ import React from 'react'
 
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
-    fontSize: 7.5,
+    padding: 25,
+    paddingBottom: 60,
+    fontSize: 5.5,
     fontFamily: 'Helvetica',
     color: '#000',
     backgroundColor: '#fff',
-    lineHeight: 1.3,
+    lineHeight: 1.15,
   },
   titleContainer: {
     borderBottomWidth: 1,
     borderBottomColor: '#000',
-    marginBottom: 10,
-    paddingBottom: 5,
+    marginBottom: 8,
+    paddingBottom: 3,
     alignItems: 'center'
   },
   title: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: 'bold',
     fontStyle: 'italic',
   },
   companyName: {
-    fontSize: 10,
+    fontSize: 7.5,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    marginBottom: 10,
+    marginBottom: 6,
   },
   section: {
-    marginBottom: 8,
+    marginBottom: 4,
   },
   articleTitle: {
-    fontSize: 7.5,
-    fontWeight: 'normal',
+    fontSize: 5.5,
+    fontWeight: 'bold',
     textTransform: 'uppercase',
   },
   textBlock: {
@@ -41,13 +42,15 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: 'absolute',
-    bottom: 30,
-    left: 30,
-    right: 30,
+    bottom: 25,
+    left: 25,
+    right: 25,
     textAlign: 'center',
-    fontSize: 8,
+    fontSize: 6.5,
     fontStyle: 'italic',
-    paddingTop: 20,
+    borderTopWidth: 0.5,
+    borderTopColor: '#ccc',
+    paddingTop: 10,
   }
 })
 

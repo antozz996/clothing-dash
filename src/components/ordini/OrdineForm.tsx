@@ -272,7 +272,7 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
                   )}
                 >
                   <option value="Pagamento da concordare">Pagamento da concordare</option>
-                  <option value="Bonifico anticipato">Bonifico anticipato (Sconto 5% autom.)</option>
+                  <option value="Bonifico anticipato">Bonifico anticipato</option>
                   <option value="Contrassegno 60/90 FM">Contrassegno 60/90 FM</option>
                 </select>
               </div>
