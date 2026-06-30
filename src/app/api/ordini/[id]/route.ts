@@ -48,8 +48,8 @@ export async function PATCH(
     })
     
     if (!ordineEsistente) return NextResponse.json({ error: 'Ordine non trovato' }, { status: 404 })
-    if (ordineEsistente.stato !== 'bozza') {
-      return NextResponse.json({ error: 'Solo gli ordini in bozza possono essere modificati' }, { status: 400 })
+    if (ordineEsistente.stato !== 'bozza' && ordineEsistente.stato !== 'confermato') {
+      return NextResponse.json({ error: 'Solo gli ordini in bozza o confermati possono essere modificati' }, { status: 400 })
     }
 
     // Calcolo nuovi totali
@@ -71,6 +71,7 @@ export async function PATCH(
       return await tx.ordine.update({
         where: { id: params.id },
         data: {
+          stato: data.stato,
           note: data.note,
           metodoPagamento: data.metodoPagamento || 'Pagamento da concordare',
           scontoPercentuale: data.scontoPercentuale || 0,

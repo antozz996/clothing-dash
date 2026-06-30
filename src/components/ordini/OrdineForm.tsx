@@ -185,7 +185,7 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
     }
   }
 
-  const isReadOnly = isEdit && stato !== 'bozza'
+  const isReadOnly = isEdit && stato !== 'bozza' && stato !== 'confermato'
 
   if (fetching) {
     return (
@@ -391,25 +391,65 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
 
             {!isReadOnly ? (
               <div className="pt-2 space-y-3 font-inter">
-                <button
-                  type="button"
-                  onClick={() => onSubmit('bozza')}
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all border-2 border-slate-100 text-slate-600 hover:bg-slate-50 active:scale-95"
-                >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  Salva come Bozza
-                </button>
-                
-                <button
-                  type="button"
-                  onClick={() => onSubmit('confermato')}
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 hover:shadow-indigo-200 active:scale-95"
-                >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                  Conferma Ordine
-                </button>
+                {isEdit && stato === 'confermato' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => onSubmit('confermato')}
+                      disabled={loading}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 hover:shadow-indigo-200 active:scale-95"
+                    >
+                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                      Salva Modifiche
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => onSubmit('bozza')}
+                      disabled={loading}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all border-2 border-slate-100 text-slate-600 hover:bg-slate-50 active:scale-95"
+                    >
+                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      Riporta in Bozza
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm('Sei sicuro di voler annullare questo ordine?')) {
+                          onSubmit('annullato')
+                        }
+                      }}
+                      disabled={loading}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 active:scale-95"
+                    >
+                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
+                      Annulla Ordine
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => onSubmit('bozza')}
+                      disabled={loading}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all border-2 border-slate-100 text-slate-600 hover:bg-slate-50 active:scale-95"
+                    >
+                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      Salva come Bozza
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => onSubmit('confermato')}
+                      disabled={loading}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 hover:shadow-indigo-200 active:scale-95"
+                    >
+                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                      Conferma Ordine
+                    </button>
+                  </>
+                )}
               </div>
             ) : (
               <div className="pt-2 space-y-3 font-inter">
@@ -457,24 +497,49 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
           </div>
           <div className="flex gap-2">
             {!isReadOnly ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() => onSubmit('bozza')}
-                  disabled={loading}
-                  className="px-3 py-2 text-xs font-bold rounded-xl border border-slate-100 text-slate-600 bg-white active:bg-slate-50"
-                >
-                  Bozza
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onSubmit('confermato')}
-                  disabled={loading}
-                  className="px-4 py-2 text-xs font-bold rounded-xl text-white bg-indigo-600 shadow-md hover:bg-indigo-700 hover:shadow-indigo-200 active:scale-95"
-                >
-                  Conferma
-                </button>
-              </>
+              isEdit && stato === 'confermato' ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onSubmit('confermato')}
+                    disabled={loading}
+                    className="px-3 py-2 text-xs font-bold rounded-xl text-white bg-indigo-600 active:scale-95"
+                  >
+                    Salva
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm('Sei sicuro di voler annullare questo ordine?')) {
+                        onSubmit('annullato')
+                      }
+                    }}
+                    disabled={loading}
+                    className="px-3 py-2 text-xs font-bold rounded-xl text-white bg-red-600 active:scale-95"
+                  >
+                    Annulla
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onSubmit('bozza')}
+                    disabled={loading}
+                    className="px-3 py-2 text-xs font-bold rounded-xl border border-slate-100 text-slate-600 bg-white active:bg-slate-50"
+                  >
+                    Bozza
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onSubmit('confermato')}
+                    disabled={loading}
+                    className="px-4 py-2 text-xs font-bold rounded-xl text-white bg-indigo-600 shadow-md hover:bg-indigo-700 hover:shadow-indigo-200 active:scale-95"
+                  >
+                    Conferma
+                  </button>
+                </>
+              )
             ) : (
               <a
                 href={`/api/ordini/${params?.id}/pdf`}
