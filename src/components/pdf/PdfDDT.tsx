@@ -301,17 +301,17 @@ export default function PdfDDT({ ddt }: { ddt: any }) {
              <Text style={styles.infoLabel}>COD.CLI</Text>
              <Text style={styles.infoValue}>C-{ddt.cliente.id.substring(0,4).toUpperCase()}</Text>
           </View>
-          <View style={[styles.infoCell, { justifyContent: 'center', paddingLeft: 6 }]}>
+          <View style={[styles.infoCell, { justifyContent: 'center', paddingLeft: 3, paddingRight: 3 }]}>
              {ddt.cliente.cf ? (
                <View style={{ flexDirection: 'row', marginBottom: 2, alignItems: 'center' }}>
-                 <Text style={{ width: 28, fontSize: 6.5, fontStyle: 'italic' }}>C.F.</Text>
-                 <Text style={{ fontSize: 7.5, fontWeight: 'bold' }}>{ddt.cliente.cf}</Text>
+                 <Text style={{ width: 20, fontSize: 6.5, fontStyle: 'italic' }}>C.F.</Text>
+                 <Text style={{ fontSize: 6.8, fontWeight: 'bold' }}>{ddt.cliente.cf}</Text>
                </View>
              ) : null}
              {ddt.cliente.piva ? (
                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                 <Text style={{ width: 28, fontSize: 6.5, fontStyle: 'italic' }}>P.IVA</Text>
-                 <Text style={{ fontSize: 7.5, fontWeight: 'bold' }}>{ddt.cliente.piva}</Text>
+                 <Text style={{ width: 20, fontSize: 6.5, fontStyle: 'italic' }}>P.IVA</Text>
+                 <Text style={{ fontSize: 6.8, fontWeight: 'bold' }}>{ddt.cliente.piva}</Text>
                </View>
              ) : null}
              {!ddt.cliente.cf && !ddt.cliente.piva && (
