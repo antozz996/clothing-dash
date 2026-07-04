@@ -502,16 +502,9 @@ export default function PdfOrdine({ ordine }: Props) {
 
         {/* Data Consegna Prevista */}
         <View style={styles.deliveryBox} wrap={false}>
-          <View style={styles.deliveryLeft}>
-            <Text style={{ fontSize: 7, fontWeight: 'bold' }}>
-              DATA DI CONSEGNA PREVISTA :
-            </Text>
-          </View>
-          <View style={styles.deliveryRight}>
-            <Text style={{ fontSize: 8, fontWeight: 'bold', textAlign: 'center' }}>
-              FEBBRAIO/MARZO 2027
-            </Text>
-          </View>
+          <Text style={{ fontSize: 7, fontWeight: 'bold', paddingLeft: 5 }}>
+            DATA DI CONSEGNA PREVISTA :  FEBBRAIO/MARZO 2027
+          </Text>
         </View>
 
         <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
