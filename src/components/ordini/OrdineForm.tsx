@@ -351,7 +351,7 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
             <div className="space-y-4 font-inter">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-slate-500 font-medium">Totale Capi</span>
-                <span className="font-bold text-slate-900">{totali.totCapi}</span>
+                <span className="font-bold text-slate-900">{totali.totaleCapi}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-slate-500 font-medium">Valore Merce</span>
@@ -493,7 +493,7 @@ export default function OrdineForm({ params }: { params?: { id?: string } }) {
           <div className="text-left font-inter">
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Totale Ivato</p>
             <p className="text-lg font-black text-indigo-600">{formatEuro(totali.totaleIvato)}</p>
-            <p className="text-[10px] text-slate-500 font-medium mt-0.5">{totali.totCapi} Capi</p>
+            <p className="text-[10px] text-slate-500 font-medium mt-0.5">{totali.totaleCapi} Capi</p>
           </div>
           <div className="flex gap-2">
             {!isReadOnly ? (

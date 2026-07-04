@@ -22,8 +22,8 @@ export async function GET(
 
     if (!ddt) return NextResponse.json({ error: 'DDT non trovato' }, { status: 404 })
 
-    const stream = await renderToStream(React.createElement(PdfDDT, { ddt }))
-    const chunks = []
+    const stream = await renderToStream(React.createElement(PdfDDT, { ddt }) as any)
+    const chunks: any[] = []
     for await (const chunk of stream) chunks.push(chunk)
     const buffer = Buffer.concat(chunks)
 

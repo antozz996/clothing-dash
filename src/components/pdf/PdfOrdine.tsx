@@ -234,6 +234,24 @@ const styles = StyleSheet.create({
     fontSize: 9,
   },
 
+  deliveryBox: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: '#000',
+    minHeight: 18,
+    alignItems: 'center',
+  },
+  deliveryLeft: {
+    width: '70%',
+    padding: 5,
+    borderRightWidth: 1,
+    borderRightColor: '#000',
+  },
+  deliveryRight: {
+    width: '30%',
+    padding: 5,
+  },
   pageNumber: {
     position: 'absolute',
     bottom: 20,
@@ -339,11 +357,19 @@ export default function PdfOrdine({ ordine }: Props) {
           </View>
           <View style={styles.infoCell}>
              <Text style={styles.infoLabel}>C.F. / P.IVA</Text>
-             <Text style={styles.infoValue}>{ordine.cliente.cf || ordine.cliente.piva || '---'}</Text>
+             {ordine.cliente.piva && (
+               <Text style={[styles.infoValue, { fontSize: 7, fontWeight: 'bold' }]}>P.IVA: {ordine.cliente.piva}</Text>
+             )}
+             {ordine.cliente.cf && (
+               <Text style={[styles.infoValue, { fontSize: 7, fontWeight: 'bold' }]}>C.F.: {ordine.cliente.cf}</Text>
+             )}
+             {!ordine.cliente.piva && !ordine.cliente.cf && (
+               <Text style={styles.infoValue}>---</Text>
+             )}
           </View>
           <View style={styles.infoCell}>
              <Text style={styles.infoLabel}>AGENTE</Text>
-             <Text style={styles.infoValue}>DIREZIONE</Text>
+             <Text style={styles.infoValue}>NOIR</Text>
           </View>
           <View style={styles.infoCell}>
              <Text style={styles.infoLabel}>TIPO DOCUMENTO</Text>
@@ -467,6 +493,20 @@ export default function PdfOrdine({ ordine }: Props) {
                  <Text>{formatEuro(totaliDettagliati.totaleIvato)}</Text>
               </View>
            </View>
+        </View>
+
+        {/* Data Consegna Prevista */}
+        <View style={styles.deliveryBox} wrap={false}>
+          <View style={styles.deliveryLeft}>
+            <Text style={{ fontSize: 7, fontWeight: 'bold' }}>
+              DATA DI CONSEGNA PREVISTA :
+            </Text>
+          </View>
+          <View style={styles.deliveryRight}>
+            <Text style={{ fontSize: 8, fontWeight: 'bold', textAlign: 'center' }}>
+              FEBBRAIO/MARZO 2027
+            </Text>
+          </View>
         </View>
 
         <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (

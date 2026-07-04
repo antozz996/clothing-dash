@@ -303,11 +303,19 @@ export default function PdfDDT({ ddt }: { ddt: any }) {
           </View>
           <View style={styles.infoCell}>
              <Text style={styles.infoLabel}>C.F. / P.IVA</Text>
-             <Text style={styles.infoValue}>{ddt.cliente.cf || ddt.cliente.piva || '---'}</Text>
+             {ddt.cliente.piva && (
+               <Text style={[styles.infoValue, { fontSize: 7, fontWeight: 'bold' }]}>P.IVA: {ddt.cliente.piva}</Text>
+             )}
+             {ddt.cliente.cf && (
+               <Text style={[styles.infoValue, { fontSize: 7, fontWeight: 'bold' }]}>C.F.: {ddt.cliente.cf}</Text>
+             )}
+             {!ddt.cliente.piva && !ddt.cliente.cf && (
+               <Text style={styles.infoValue}>---</Text>
+             )}
           </View>
           <View style={styles.infoCell}>
              <Text style={styles.infoLabel}>AGENTE</Text>
-             <Text style={styles.infoValue}>{ddt.agente || 'DIREZIONE'}</Text>
+             <Text style={styles.infoValue}>{ddt.agente || 'NOIR'}</Text>
           </View>
           <View style={styles.infoCell}>
              <Text style={styles.infoLabel}>TIPO DOCUMENTO</Text>

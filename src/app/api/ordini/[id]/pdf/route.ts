@@ -29,11 +29,11 @@ export async function GET(
 
     // Genera il PDF stream
     const stream = await renderToStream(
-      React.createElement(PdfOrdine, { ordine })
+      React.createElement(PdfOrdine, { ordine }) as any
     )
 
     // Converte lo stream in un array buffer per la risposta Next.js
-    const chunks = []
+    const chunks: any[] = []
     for await (const chunk of stream) {
       chunks.push(chunk)
     }

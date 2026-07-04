@@ -24,6 +24,7 @@ const clienteSchema = z.object({
   capSpedizione: z.string().optional().or(z.literal('')),
   cittaSpedizione: z.string().optional().or(z.literal('')),
   provinciaSpedizione: z.string().optional().or(z.literal('')),
+  telefono: z.string().optional().or(z.literal('')),
   note: z.string().optional().or(z.literal('')),
 })
 

@@ -24,6 +24,7 @@ const prodottoSchema = z.object({
 })
 
 type ProdottoForm = z.infer<typeof prodottoSchema>
+type ProdottoFormInput = z.input<typeof prodottoSchema>
 
 export default function ProdottoForm({ params }: { params?: { id?: string } }) {
   const router = useRouter()
@@ -41,7 +42,7 @@ export default function ProdottoForm({ params }: { params?: { id?: string } }) {
     watch,
     reset,
     formState: { errors },
-  } = useForm<ProdottoForm>({
+  } = useForm<ProdottoFormInput, any, ProdottoForm>({
     resolver: zodResolver(prodottoSchema),
     defaultValues: {
       taglie: [],
