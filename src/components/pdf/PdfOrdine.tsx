@@ -351,40 +351,40 @@ export default function PdfOrdine({ ordine }: Props) {
 
         {/* Info Documento */}
         <View style={styles.infoGrid}>
-          <View style={styles.infoCell}>
+          <View style={[styles.infoCell, { flex: 0.8 }]}>
              <Text style={styles.infoLabel}>COD.CLI</Text>
              <Text style={styles.infoValue}>C-{ordine.cliente.id.substring(0,4).toUpperCase()}</Text>
           </View>
-          <View style={[styles.infoCell, { justifyContent: 'center', paddingLeft: 3, paddingRight: 3 }]}>
+          <View style={[styles.infoCell, { flex: 1.5, justifyContent: 'center', paddingLeft: 3, paddingRight: 3 }]}>
              {ordine.cliente.cf ? (
                <View style={{ flexDirection: 'row', marginBottom: 2, alignItems: 'center' }}>
                  <Text style={{ width: 20, fontSize: 6.5, fontStyle: 'italic' }}>C.F.</Text>
-                 <Text style={{ fontSize: 6.8, fontWeight: 'bold' }}>{ordine.cliente.cf}</Text>
+                 <Text style={{ fontSize: 7.2, fontWeight: 'bold' }}>{ordine.cliente.cf}</Text>
                </View>
              ) : null}
              {ordine.cliente.piva ? (
                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                  <Text style={{ width: 20, fontSize: 6.5, fontStyle: 'italic' }}>P.IVA</Text>
-                 <Text style={{ fontSize: 6.8, fontWeight: 'bold' }}>{ordine.cliente.piva}</Text>
+                 <Text style={{ fontSize: 7.2, fontWeight: 'bold' }}>{ordine.cliente.piva}</Text>
                </View>
              ) : null}
              {!ordine.cliente.cf && !ordine.cliente.piva && (
                <Text style={styles.infoValue}>---</Text>
              )}
           </View>
-          <View style={styles.infoCell}>
+          <View style={[styles.infoCell, { flex: 0.7 }]}>
              <Text style={styles.infoLabel}>AGENTE</Text>
              <Text style={styles.infoValue}>NOIR</Text>
           </View>
-          <View style={styles.infoCell}>
+          <View style={[styles.infoCell, { flex: 1.3 }]}>
              <Text style={styles.infoLabel}>TIPO DOCUMENTO</Text>
              <Text style={styles.infoValue}>COMMISSIONE ORDINE</Text>
           </View>
-          <View style={styles.infoCell}>
+          <View style={[styles.infoCell, { flex: 0.9 }]}>
              <Text style={styles.infoLabel}>DATA DOC.</Text>
              <Text style={styles.infoValue}>{formatData(ordine.dataOrdine)}</Text>
           </View>
-          <View style={styles.infoCellLast}>
+          <View style={[styles.infoCellLast, { flex: 0.8 }]}>
              <Text style={styles.infoLabel}>NR.DOC.</Text>
              <Text style={styles.infoValue}>{ordine.numeroDocumento}</Text>
           </View>

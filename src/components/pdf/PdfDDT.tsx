@@ -297,40 +297,40 @@ export default function PdfDDT({ ddt }: { ddt: any }) {
 
         {/* Info Documento */}
         <View style={styles.infoGrid}>
-          <View style={styles.infoCell}>
+          <View style={[styles.infoCell, { flex: 0.8 }]}>
              <Text style={styles.infoLabel}>COD.CLI</Text>
              <Text style={styles.infoValue}>C-{ddt.cliente.id.substring(0,4).toUpperCase()}</Text>
           </View>
-          <View style={[styles.infoCell, { justifyContent: 'center', paddingLeft: 3, paddingRight: 3 }]}>
+          <View style={[styles.infoCell, { flex: 1.5, justifyContent: 'center', paddingLeft: 3, paddingRight: 3 }]}>
              {ddt.cliente.cf ? (
                <View style={{ flexDirection: 'row', marginBottom: 2, alignItems: 'center' }}>
                  <Text style={{ width: 20, fontSize: 6.5, fontStyle: 'italic' }}>C.F.</Text>
-                 <Text style={{ fontSize: 6.8, fontWeight: 'bold' }}>{ddt.cliente.cf}</Text>
+                 <Text style={{ fontSize: 7.2, fontWeight: 'bold' }}>{ddt.cliente.cf}</Text>
                </View>
              ) : null}
              {ddt.cliente.piva ? (
                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                  <Text style={{ width: 20, fontSize: 6.5, fontStyle: 'italic' }}>P.IVA</Text>
-                 <Text style={{ fontSize: 6.8, fontWeight: 'bold' }}>{ddt.cliente.piva}</Text>
+                 <Text style={{ fontSize: 7.2, fontWeight: 'bold' }}>{ddt.cliente.piva}</Text>
                </View>
              ) : null}
              {!ddt.cliente.cf && !ddt.cliente.piva && (
                <Text style={styles.infoValue}>---</Text>
              )}
           </View>
-          <View style={styles.infoCell}>
+          <View style={[styles.infoCell, { flex: 0.7 }]}>
              <Text style={styles.infoLabel}>AGENTE</Text>
              <Text style={styles.infoValue}>{ddt.agente || 'NOIR'}</Text>
           </View>
-          <View style={styles.infoCell}>
+          <View style={[styles.infoCell, { flex: 1.3 }]}>
              <Text style={styles.infoLabel}>TIPO DOCUMENTO</Text>
              <Text style={styles.infoValue}>DDT DI TRASPORTO</Text>
           </View>
-          <View style={styles.infoCell}>
+          <View style={[styles.infoCell, { flex: 0.9 }]}>
              <Text style={styles.infoLabel}>DATA DOC.</Text>
              <Text style={styles.infoValue}>{formatData(ddt.dataDdt)}</Text>
           </View>
-          <View style={styles.infoCellLast}>
+          <View style={[styles.infoCellLast, { flex: 0.8 }]}>
              <Text style={styles.infoLabel}>NR.DOC.</Text>
              <Text style={styles.infoValue}>{ddt.numeroDocumento}</Text>
           </View>
