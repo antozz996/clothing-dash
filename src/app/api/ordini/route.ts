@@ -102,3 +102,40 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Errore nella creazione dell\'ordine' }, { status: 500 })
   }
 }
+
+/**
+ * DELETE /api/ordini
+ * Elimina più ordini in bulk.
+ */
+export async function DELETE(request: Request) {
+  try {
+    const { ids } = await request.json()
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ error: 'Lista di ID non valida' }, { status: 400 })
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Scollega i DDT associati agli ordini da eliminare
+      await tx.ddt.updateMany({
+        where: {
+          ordineId: { in: ids }
+        },
+        data: {
+          ordineId: null
+        }
+      })
+
+      // 2. Elimina gli ordini (le righeGriglia verranno eliminate in cascata grazie a onDelete: Cascade)
+      return await tx.ordine.deleteMany({
+        where: {
+          id: { in: ids }
+        }
+      })
+    })
+
+    return NextResponse.json({ success: true, count: result.count })
+  } catch (error) {
+    console.error('Error bulk deleting ordini:', error)
+    return NextResponse.json({ error: 'Errore nell\'eliminazione degli ordini selezionati' }, { status: 500 })
+  }
+}

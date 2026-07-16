@@ -115,13 +115,32 @@ export async function DELETE(
 ) {
   try {
     const ordine = await prisma.ordine.findUnique({ where: { id: params.id } })
-    if (ordine?.stato !== 'bozza') {
-      return NextResponse.json({ error: 'Puoi eliminare solo ordini in bozza' }, { status: 400 })
+    if (!ordine) {
+      return NextResponse.json({ error: 'Ordine non trovato' }, { status: 404 })
     }
 
-    await prisma.ordine.delete({ where: { id: params.id } })
+    await prisma.$transaction(async (tx) => {
+      // 1. Scollega eventuali DDT associati a questo ordine
+      await tx.ddt.updateMany({
+        where: {
+          ordineId: params.id
+        },
+        data: {
+          ordineId: null
+        }
+      })
+
+      // 2. Elimina l'ordine (le righeGriglia verranno eliminate in cascata grazie a onDelete: Cascade)
+      await tx.ordine.delete({
+        where: {
+          id: params.id
+        }
+      })
+    })
+
     return NextResponse.json({ success: true })
   } catch (error) {
-    return NextResponse.json({ error: 'Errore nell\'eliminazione' }, { status: 500 })
+    console.error('Error deleting single ordine:', error)
+    return NextResponse.json({ error: 'Errore nell\'eliminazione dell\'ordine' }, { status: 500 })
   }
 }

@@ -24,8 +24,11 @@ export default function OrdiniPage() {
   const [search, setSearch] = useState('')
   const [statoFilter, setStatoFilter] = useState('')
   const [loading, setLoading] = useState(true)
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
+    setSelectedIds([])
     fetchOrdini()
   }, [search, statoFilter])
 
@@ -45,6 +48,56 @@ export default function OrdiniPage() {
       console.error('Error fetching ordini:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeleteSingle = async (id: string) => {
+    if (!window.confirm("Sei sicuro di voler eliminare questo ordine? L'operazione eliminerà definitivamente l'ordine e tutte le sue righe dal database.")) {
+      return
+    }
+    try {
+      const res = await fetch(`/api/ordini/${id}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        setSelectedIds(prev => prev.filter(item => item !== id))
+        fetchOrdini()
+      } else {
+        const errorData = await res.json()
+        alert(errorData.error || 'Errore durante la cancellazione dell\'ordine')
+      }
+    } catch (error) {
+      console.error('Error deleting order:', error)
+      alert('Errore durante la cancellazione dell\'ordine')
+    }
+  }
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.length === 0) return
+    if (!window.confirm(`Sei sicuro di voler eliminare i ${selectedIds.length} ordini selezionati? L'operazione eliminerà definitivamente gli ordini e tutte le loro righe dal database.`)) {
+      return
+    }
+    setDeleting(true)
+    try {
+      const res = await fetch('/api/ordini', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids: selectedIds }),
+      })
+      if (res.ok) {
+        setSelectedIds([])
+        fetchOrdini()
+      } else {
+        const errorData = await res.json()
+        alert(errorData.error || 'Errore durante la cancellazione degli ordini')
+      }
+    } catch (error) {
+      console.error('Error deleting orders:', error)
+      alert('Errore durante la cancellazione degli ordini')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -117,6 +170,20 @@ export default function OrdiniPage() {
           <table className="w-full text-sm text-left whitespace-nowrap">
             <thead className="text-xs text-slate-500 bg-slate-50 uppercase font-semibold border-b border-slate-200">
               <tr>
+                <th className="py-4 px-6 w-10 text-center font-semibold text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={ordini.length > 0 && selectedIds.length === ordini.length}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedIds(ordini.map(o => o.id))
+                      } else {
+                        setSelectedIds([])
+                      }
+                    }}
+                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 cursor-pointer"
+                  />
+                </th>
                 <th className="py-4 px-6 font-semibold text-slate-700">Ref. Documento</th>
                 <th className="py-4 px-6 font-semibold text-slate-700">Data</th>
                 <th className="py-4 px-6 font-semibold text-slate-700">Cliente</th>
@@ -130,12 +197,26 @@ export default function OrdiniPage() {
               {loading ? (
                 [1, 2, 3].map(i => (
                   <tr key={i} className="animate-pulse">
-                    <td colSpan={7} className="py-6 px-6"><div className="h-4 bg-slate-100 rounded w-full" /></td>
+                    <td colSpan={8} className="py-6 px-6"><div className="h-4 bg-slate-100 rounded w-full" /></td>
                   </tr>
                 ))
               ) : ordini.length > 0 ? (
                 ordini.map((ord) => (
-                  <tr key={ord.id} className="hover:bg-slate-50 transition-colors group">
+                  <tr key={ord.id} className={cn("hover:bg-slate-50 transition-colors group", selectedIds.includes(ord.id) && "bg-indigo-50/40 hover:bg-indigo-50/60")}>
+                    <td className="py-5 px-6 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(ord.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds(prev => [...prev, ord.id])
+                          } else {
+                            setSelectedIds(prev => prev.filter(id => id !== ord.id))
+                          }
+                        }}
+                        className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 cursor-pointer"
+                      />
+                    </td>
                     <td className="py-5 px-6 font-bold text-slate-900">{ord.numeroDocumento}</td>
                     <td className="py-5 px-6 text-slate-500">{formatData(ord.dataOrdine)}</td>
                     <td className="py-5 px-6 font-semibold text-slate-700">{ord.cliente.ragioneSociale}</td>
@@ -180,13 +261,23 @@ export default function OrdiniPage() {
                             <span>Crea DDT</span>
                           </Link>
                         )}
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteSingle(ord.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 transition-all border border-red-200 cursor-pointer"
+                          title="Elimina ordine"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Elimina</span>
+                        </button>
                       </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="py-20 text-center">
+                  <td colSpan={8} className="py-20 text-center">
                     <div className="flex flex-col items-center gap-4">
                       <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center">
                         <ClipboardList className="w-8 h-8 text-slate-300" />
@@ -222,12 +313,26 @@ export default function OrdiniPage() {
           ))
         ) : ordini.length > 0 ? (
           ordini.map((ord) => (
-            <div key={ord.id} className="card p-5 bg-white shadow-md ring-1 ring-slate-200 rounded-2xl space-y-4 font-inter">
+            <div key={ord.id} className={cn("card p-5 bg-white shadow-md ring-1 ring-slate-200 rounded-2xl space-y-4 font-inter transition-all", selectedIds.includes(ord.id) && "ring-indigo-500 bg-indigo-50/20")}>
               {/* Header */}
               <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Documento</span>
-                  <p className="text-sm font-black text-slate-900 mt-0.5">{ord.numeroDocumento}</p>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(ord.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedIds(prev => [...prev, ord.id])
+                      } else {
+                        setSelectedIds(prev => prev.filter(id => id !== ord.id))
+                      }
+                    }}
+                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 cursor-pointer"
+                  />
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Documento</span>
+                    <p className="text-sm font-black text-slate-900 mt-0.5">{ord.numeroDocumento}</p>
+                  </div>
                 </div>
                 <span className={cn(
                   "px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
@@ -260,10 +365,10 @@ export default function OrdiniPage() {
               </div>
 
               {/* Actions Footer */}
-              <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
                 <Link
                   href={`/ordini/${ord.id}`}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 active:bg-slate-100 transition-colors"
+                  className="flex-1 min-w-[80px] flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 active:bg-slate-100 transition-colors"
                 >
                   <FileText className="w-3.5 h-3.5" />
                   <span>Vedi</span>
@@ -273,7 +378,7 @@ export default function OrdiniPage() {
                   href={`/api/ordini/${ord.id}/pdf`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 active:bg-slate-100 transition-colors"
+                  className="flex-1 min-w-[80px] flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 active:bg-slate-100 transition-colors"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>Stampa</span>
@@ -282,12 +387,21 @@ export default function OrdiniPage() {
                 {(ord.stato === 'confermato' || ord.stato === 'spedito') && (
                   <Link
                     href={`/ddt/nuovo?orderId=${ord.id}`}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 shadow-sm transition-all"
+                    className="flex-1 min-w-[80px] flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 shadow-sm transition-all"
                   >
                     <Truck className="w-3.5 h-3.5" />
                     <span>DDT</span>
                   </Link>
                 )}
+
+                <button
+                  type="button"
+                  onClick={() => handleDeleteSingle(ord.id)}
+                  className="flex-1 min-w-[80px] flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-red-600 bg-red-50 border border-red-200 active:bg-red-100 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Elimina</span>
+                </button>
               </div>
             </div>
           ))
@@ -297,6 +411,32 @@ export default function OrdiniPage() {
           </div>
         )}
       </div>
+
+      {/* Floating Bulk Action Bar */}
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl border border-slate-800 animate-fade-in max-w-[90vw] w-max font-inter">
+          <span className="text-sm font-semibold">
+            {selectedIds.length} {selectedIds.length === 1 ? 'ordine selezionato' : 'ordini selezionati'}
+          </span>
+          <div className="h-4 w-px bg-slate-800" />
+          <button
+            type="button"
+            onClick={() => setSelectedIds([])}
+            className="text-xs font-bold text-slate-400 hover:text-white transition-colors cursor-pointer"
+          >
+            Deseleziona
+          </button>
+          <button
+            type="button"
+            disabled={deleting}
+            onClick={handleDeleteSelected}
+            className="flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:opacity-50 text-xs font-bold text-white rounded-xl shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>{deleting ? 'Eliminazione...' : 'Elimina Selezionati'}</span>
+          </button>
+        </div>
+      )}
     </div>
   )
 }
