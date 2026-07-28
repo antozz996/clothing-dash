@@ -258,7 +258,11 @@ interface Props {
 }
 
 export default function PdfReport({ data, filters }: Props) {
-  const prodotti = data.prodotti || []
+  const prodotti = [...(data.prodotti || [])].sort((a, b) => {
+    const skuCompare = (a.sku || '').localeCompare(b.sku || '', undefined, { numeric: true, sensitivity: 'base' })
+    if (skuCompare !== 0) return skuCompare
+    return (a.colore || '').localeCompare(b.colore || '', undefined, { numeric: true, sensitivity: 'base' })
+  })
 
   return (
     <Document title={`Report_Vendite_${formatData(new Date()).replace(/\//g, '-')}`}>

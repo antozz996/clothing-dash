@@ -267,7 +267,7 @@ export default function ReportPage() {
                 {data?.perProdotto?.length === 0 ? (
                    <div className="p-8 text-center text-xs text-slate-400 font-bold">Nessun dato disponibile</div>
                 ) : (
-                   data?.perProdotto?.sort((a: any, b: any) => b.quantita - a.quantita).slice(0, 50).map((p: any, i: number) => (
+                   data?.perProdotto?.sort((a: any, b: any) => (a.sku || '').localeCompare(b.sku || '', undefined, { numeric: true, sensitivity: 'base' })).slice(0, 50).map((p: any, i: number) => (
                       <div key={i} className="p-4 flex items-center justify-between hover:bg-slate-50/80 transition-colors">
                          <div className="space-y-1">
                             <div className="font-extrabold text-slate-800 text-sm tracking-tight">{p.sku}</div>
@@ -300,7 +300,7 @@ export default function ReportPage() {
                       </tr>
                    </thead>
                    <tbody className="divide-y divide-slate-100">
-                      {data?.perProdotto?.sort((a: any, b: any) => b.quantita - a.quantita).slice(0, 50).map((p: any, i: number) => (
+                      {data?.perProdotto?.sort((a: any, b: any) => (a.sku || '').localeCompare(b.sku || '', undefined, { numeric: true, sensitivity: 'base' })).slice(0, 50).map((p: any, i: number) => (
                          <tr key={i} className="hover:bg-slate-50 transition-colors">
                             <td className="px-6 py-4">
                                <div className="font-bold text-slate-900">{p.sku}</div>
@@ -329,7 +329,7 @@ export default function ReportPage() {
                 {data?.perCliente?.length === 0 ? (
                    <div className="p-8 text-center text-xs text-slate-400 font-bold">Nessun dato disponibile</div>
                 ) : (
-                   data?.perCliente?.sort((a: any, b: any) => b.valore - a.valore).map((c: any, i: number) => (
+                   data?.perCliente?.sort((a: any, b: any) => (a.ragioneSociale || '').localeCompare(b.ragioneSociale || '', undefined, { numeric: true, sensitivity: 'base' })).map((c: any, i: number) => (
                       <div key={i} className="p-4 flex items-center justify-between hover:bg-slate-50/80 transition-colors">
                          <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 font-bold text-xs flex items-center justify-center border border-emerald-100 uppercase shrink-0">
@@ -359,7 +359,7 @@ export default function ReportPage() {
                       </tr>
                    </thead>
                    <tbody className="divide-y divide-slate-100">
-                      {data?.perCliente?.sort((a: any, b: any) => b.valore - a.valore).map((c: any, i: number) => (
+                      {data?.perCliente?.sort((a: any, b: any) => (a.ragioneSociale || '').localeCompare(b.ragioneSociale || '', undefined, { numeric: true, sensitivity: 'base' })).map((c: any, i: number) => (
                          <tr key={i} className="hover:bg-slate-50 transition-colors">
                             <td className="px-6 py-4 font-bold text-slate-900">{c.ragioneSociale}</td>
                             <td className="px-6 py-4 text-right font-black text-slate-700">{c.quantita}</td>

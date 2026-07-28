@@ -71,12 +71,18 @@ export async function GET(request: Request) {
       groupedProducts[key].valore += r.quantita * r.prezzoUnitario
     })
 
+    const sortedProducts = Object.values(groupedProducts).sort((a: any, b: any) => {
+      const skuCompare = (a.sku || '').localeCompare(b.sku || '', undefined, { numeric: true, sensitivity: 'base' })
+      if (skuCompare !== 0) return skuCompare
+      return (a.colore || '').localeCompare(b.colore || '', undefined, { numeric: true, sensitivity: 'base' })
+    })
+
     const reportData = {
       totali: {
         capi: righe.reduce((s, r) => s + r.quantita, 0),
         valore: righe.reduce((s, r) => s + (r.quantita * r.prezzoUnitario), 0)
       },
-      prodotti: Object.values(groupedProducts)
+      prodotti: sortedProducts
     }
 
     const filtersRecap = {

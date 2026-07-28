@@ -90,13 +90,23 @@ export async function GET(request: Request) {
       aggregazioneCliente[cId].valore += r.quantita * r.prezzoUnitario
     })
 
+    const sortedPerProdotto = Object.values(aggregazioneProdotto).sort((a: any, b: any) => {
+      const skuCompare = (a.sku || '').localeCompare(b.sku || '', undefined, { numeric: true, sensitivity: 'base' })
+      if (skuCompare !== 0) return skuCompare
+      return (a.colore || '').localeCompare(b.colore || '', undefined, { numeric: true, sensitivity: 'base' })
+    })
+
+    const sortedPerCliente = Object.values(aggregazioneCliente).sort((a: any, b: any) => {
+      return (a.ragioneSociale || '').localeCompare(b.ragioneSociale || '', undefined, { numeric: true, sensitivity: 'base' })
+    })
+
     return NextResponse.json({
       totali: {
         capi: righe.reduce((s, r) => s + r.quantita, 0),
         valore: righe.reduce((s, r) => s + (r.quantita * r.prezzoUnitario), 0)
       },
-      perProdotto: Object.values(aggregazioneProdotto),
-      perCliente: Object.values(aggregazioneCliente),
+      perProdotto: sortedPerProdotto,
+      perCliente: sortedPerCliente,
       dettaglioRighe: righe.map(r => ({
         id: r.id,
         data: r.ordine.dataOrdine,
