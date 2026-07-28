@@ -1,223 +1,397 @@
-import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
 import { formatData, formatEuro } from '@/lib/calcoli'
 import React from 'react'
 
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
-    fontSize: 8,
+    padding: 20,
+    fontSize: 7,
     fontFamily: 'Helvetica',
-    color: '#333',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    paddingBottom: 10,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1e293b',
-  },
-  companyInfo: {
-    textAlign: 'right',
-  },
-  companyName: {
-    fontSize: 10,
-    fontWeight: 'bold',
+    color: '#000',
+    backgroundColor: '#fff',
   },
   
-  // Section Filters
-  filterBox: {
-    padding: 10,
-    backgroundColor: '#f8fafc',
-    borderRadius: 4,
-    marginBottom: 20,
+  // Header Superiore
+  headerSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
-  filterTitle: {
-    fontSize: 7,
+  companyInfo: {
+    width: '55%',
+  },
+  companyName: {
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#64748b',
-    textTransform: 'uppercase',
     marginBottom: 4,
   },
-  filterGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 15,
-  },
-  filterItem: {
+  companyDetail: {
     fontSize: 8,
+    marginBottom: 1,
   },
-
-  // Stats
-  statsGrid: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 20,
+  reportTitleSection: {
+    width: '40%',
+    textAlign: 'right',
   },
-  statCard: {
-    flex: 1,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  statLabel: {
-    fontSize: 6,
-    color: '#64748b',
-    textTransform: 'uppercase',
+  reportTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
     marginBottom: 4,
   },
-  statValue: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#0f172a',
+  reportSubtitle: {
+    fontSize: 8,
+    color: '#444',
   },
 
-  // Table
-  table: {
-    marginTop: 10,
-    marginBottom: 20,
+  // Info Bar (Filtri, Totali)
+  infoGrid: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: '#000',
+    marginBottom: 10,
   },
+  infoCell: {
+    flex: 1,
+    padding: 4,
+    borderRightWidth: 1,
+    borderRightColor: '#000',
+  },
+  infoCellLast: {
+    flex: 1,
+    padding: 4,
+  },
+  infoLabel: {
+    fontSize: 6,
+    fontStyle: 'italic',
+    marginBottom: 2,
+  },
+  infoValue: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
+  // Table Header
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#1e293b',
-    color: '#fff',
-    padding: 6,
-    fontWeight: 'bold',
+    borderWidth: 1,
+    borderColor: '#000',
+    backgroundColor: '#fff',
   },
+  colArticolo: { width: '45%', padding: 4, borderRightWidth: 1, borderRightColor: '#000', textAlign: 'center', fontWeight: 'bold' },
+  colImporto: { width: '12%', padding: 4, borderRightWidth: 1, borderRightColor: '#000', textAlign: 'center', fontWeight: 'bold' },
+  colGriglia: { width: '43%', padding: 4, textAlign: 'center', fontWeight: 'bold' },
+  
+  // Table Rows
   tableRow: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    padding: 6,
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: '#000',
+    minHeight: 80,
   },
-  colLg: { flex: 3, flexDirection: 'row', alignItems: 'center' },
-  colMd: { flex: 2 },
-  colSm: { flex: 1, textAlign: 'right' },
+  rowArticolo: {
+    width: '45%',
+    flexDirection: 'row',
+    padding: 5,
+    borderRightWidth: 1,
+    borderRightColor: '#000',
+  },
   productImage: {
-    width: 40,
-    height: 50,
-    marginRight: 12,
+    width: 60,
+    height: 70,
+    marginRight: 10,
     objectFit: 'contain',
   },
-  sectionTitle: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: '#1e293b',
-    marginBottom: 10,
-    borderLeftWidth: 3,
-    borderLeftColor: '#4f46e5',
-    paddingLeft: 8,
+  productDetails: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  sku: { fontSize: 10, fontWeight: 'bold', marginBottom: 5 },
+  description: { fontSize: 8, color: '#333' },
+  
+  rowImporto: {
+    width: '12%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRightWidth: 1,
+    borderRightColor: '#000',
+  },
+  price: { fontSize: 10, fontWeight: 'bold' },
+
+  rowGriglia: {
+    width: '43%',
+    padding: 10,
+    justifyContent: 'center',
   },
 
-  footer: {
-    position: 'absolute',
-    bottom: 30,
-    left: 30,
-    right: 30,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    paddingTop: 10,
+  // Griglia Taglie interna
+  matrix: {
+    width: '100%',
+    borderWidth: 0.5,
+    borderColor: '#000',
+  },
+  matrixHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#eee',
+    borderBottomWidth: 0.5,
+    borderColor: '#000',
+  },
+  matrixRow: {
+    flexDirection: 'row',
+  },
+  matrixCell: {
+    flex: 1,
+    padding: 3,
+    textAlign: 'center',
+    borderRightWidth: 0.5,
+    borderColor: '#000',
+    fontSize: 7,
+  },
+  matrixCellLast: {
+    flex: 1,
+    padding: 3,
     textAlign: 'center',
     fontSize: 7,
-    color: '#94a3b8',
+  },
+  matrixColHeader: {
+    fontWeight: 'bold',
+  },
+  matrixTotCell: {
+    backgroundColor: '#dcfce7', // Light green
+    fontWeight: 'bold',
+  },
+
+  // Summary Box Footer
+  summarySection: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: '#000',
+    backgroundColor: '#f8fafc',
+  },
+  notesBox: {
+    width: '70%',
+    padding: 5,
+    borderRightWidth: 1,
+    borderRightColor: '#000',
+  },
+  totalsBox: {
+    width: '30%',
+    padding: 0,
+  },
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 3,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#000',
+  },
+  totalFinal: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 5,
+    backgroundColor: '#eee',
+    fontWeight: 'bold',
+    fontSize: 9,
+  },
+
+  pageNumber: {
+    position: 'absolute',
+    bottom: 15,
+    right: 20,
+    fontSize: 7,
+    color: '#666',
+  },
+  footerNote: {
+    position: 'absolute',
+    bottom: 15,
+    left: 20,
+    fontSize: 7,
+    color: '#666',
   }
 })
 
-export default function PdfReport({ data, filters }: { data: any, filters: any }) {
+function sortTaglie(sizes: string[]) {
+  const orderMap: Record<string, number> = {
+    'XXS': 1, 'XS': 2, 'S': 3, 'M': 4, 'L': 5, 'XL': 6, 'XXL': 7, '3XL': 8, 'TU': 99
+  }
+  return [...sizes].sort((a, b) => {
+    const numA = parseFloat(a)
+    const numB = parseFloat(b)
+    if (!isNaN(numA) && !isNaN(numB)) {
+      return numA - numB
+    }
+    if (orderMap[a.toUpperCase()] && orderMap[b.toUpperCase()]) {
+      return orderMap[a.toUpperCase()] - orderMap[b.toUpperCase()]
+    }
+    return a.localeCompare(b, undefined, { numeric: true })
+  })
+}
+
+interface Props {
+  data: {
+    totali: {
+      capi: number
+      valore: number
+    }
+    prodotti: Array<{
+      sku: string
+      descrizione: string
+      prezzoUnitario: number
+      fotoUrl: string | null
+      colore: string
+      taglie: Record<string, number>
+      totale: number
+      valore: number
+    }>
+  }
+  filters: {
+    from?: string | null
+    to?: string | null
+    cliente?: string | null
+    sku?: string | null
+    colore?: string | null
+    taglia?: string | null
+  }
+}
+
+export default function PdfReport({ data, filters }: Props) {
+  const prodotti = data.prodotti || []
+
   return (
     <Document title={`Report_Vendite_${formatData(new Date()).replace(/\//g, '-')}`}>
       <Page size="A4" style={styles.page}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.title}>REPORT VENDITE</Text>
-            <Text style={{ fontSize: 8, color: '#64748b' }}>Generato il {formatData(new Date())}</Text>
-          </View>
+        {/* Intestazione Aziendale e Titolo Report */}
+        <View style={styles.headerSection}>
           <View style={styles.companyInfo}>
             <Text style={styles.companyName}>HORUS S.R.L.</Text>
-            <Text style={{ fontSize: 7 }}>P.IVA: 09578881212</Text>
+            <Text style={styles.companyDetail}>Sede Legale: Via San Giacomo 30 - 80133 - Napoli</Text>
+            <Text style={styles.companyDetail}>Sede Operativa: Via San Giacomo 30 - 80133 - Napoli</Text>
+            <Text style={styles.companyDetail}>Mail: Amministrazione@noirshowroom.it</Text>
+            <Text style={styles.companyDetail}>C. Fisc. e P.Iva 09578881212</Text>
+          </View>
+          <View style={styles.reportTitleSection}>
+            <Text style={styles.reportTitle}>REPORT VENDITE</Text>
+            <Text style={styles.reportSubtitle}>Generato il {formatData(new Date())}</Text>
           </View>
         </View>
 
-        {/* Filters Recap */}
-        <View style={styles.filterBox}>
-          <Text style={styles.filterTitle}>Filtri Applicati</Text>
-          <View style={styles.filterGrid}>
-            <Text style={styles.filterItem}>Periodo: {filters.from || 'Inizio'} - {filters.to || 'Oggi'}</Text>
-            {filters.cliente && <Text style={styles.filterItem}>Cliente: {filters.cliente}</Text>}
-            {filters.sku && <Text style={styles.filterItem}>SKU: {filters.sku}</Text>}
-            {filters.colore && <Text style={styles.filterItem}>Colore: {filters.colore}</Text>}
-            {filters.taglia && <Text style={styles.filterItem}>Taglia: {filters.taglia}</Text>}
+        {/* Info Grid (Recap Filtri e Totali) */}
+        <View style={styles.infoGrid}>
+          <View style={[styles.infoCell, { flex: 1.2 }]}>
+            <Text style={styles.infoLabel}>PERIODO</Text>
+            <Text style={styles.infoValue}>
+              {filters?.from || filters?.to
+                ? `${filters.from ? formatData(filters.from) : 'Inizio'} - ${filters.to ? formatData(filters.to) : 'Oggi'}`
+                : 'TUTTI'}
+            </Text>
+          </View>
+          <View style={[styles.infoCell, { flex: 1.4 }]}>
+            <Text style={styles.infoLabel}>CLIENTE</Text>
+            <Text style={styles.infoValue}>
+              {filters?.cliente ? filters.cliente.toUpperCase() : 'TUTTI I CLIENTE'}
+            </Text>
+          </View>
+          <View style={[styles.infoCell, { flex: 0.9 }]}>
+            <Text style={styles.infoLabel}>TOT. VARIANTI</Text>
+            <Text style={styles.infoValue}>{prodotti.length}</Text>
+          </View>
+          <View style={[styles.infoCell, { flex: 0.9 }]}>
+            <Text style={styles.infoLabel}>TOTALE CAPI</Text>
+            <Text style={styles.infoValue}>{data?.totali?.capi || 0}</Text>
+          </View>
+          <View style={[styles.infoCellLast, { flex: 1.2 }]}>
+            <Text style={styles.infoLabel}>FATTURATO NETTO</Text>
+            <Text style={styles.infoValue}>{formatEuro(data?.totali?.valore || 0)}</Text>
           </View>
         </View>
 
-        {/* Stats */}
-        <View style={styles.statsGrid}>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Totale Capi</Text>
-            <Text style={styles.statValue}>{data.totali.capi}</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Fatturato Netto</Text>
-            <Text style={styles.statValue}>{formatEuro(data.totali.valore)}</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Varianti Vendute</Text>
-            <Text style={styles.statValue}>{data.perProdotto.length}</Text>
-          </View>
+        {/* Intestazione Tabella */}
+        <View style={styles.tableHeader}>
+          <Text style={styles.colArticolo}>ARTICOLO</Text>
+          <Text style={styles.colImporto}>IMPORTO</Text>
+          <Text style={styles.colGriglia}>GRIGLIA TAGLIE</Text>
         </View>
 
-        {/* Top Prodotti */}
-        <Text style={styles.sectionTitle}>Analisi Prodotti (Top 20)</Text>
-        <View style={styles.table}>
-          <View style={styles.tableHeader}>
-            <Text style={styles.colLg}>Articolo / Variante</Text>
-            <Text style={styles.colSm}>Q.tà</Text>
-            <Text style={styles.colSm}>Valore</Text>
-          </View>
-          {data.perProdotto.sort((a: any, b: any) => b.quantita - a.quantita).slice(0, 20).map((p: any, i: number) => (
-            <View key={i} style={styles.tableRow} wrap={false}>
-              <View style={styles.colLg}>
-                {p.fotoUrl ? (
-                  <Image src={p.fotoUrl} style={styles.productImage} />
+        {/* Righe Articoli */}
+        {prodotti.map((item, idx) => {
+          const sizes = sortTaglie(Object.keys(item.taglie || {}))
+
+          return (
+            <View key={idx} style={styles.tableRow} wrap={false}>
+              <View style={styles.rowArticolo}>
+                {item.fotoUrl ? (
+                  <Image src={item.fotoUrl} style={styles.productImage} />
                 ) : (
                   <View style={[styles.productImage, { border: '0.5px solid #eee' }]} />
                 )}
-                <Text>{p.sku} ({p.colore} / {p.taglia})</Text>
+                <View style={styles.productDetails}>
+                  <Text style={styles.sku}>{item.sku}</Text>
+                  <Text style={styles.description}>{item.descrizione}</Text>
+                </View>
               </View>
-              <Text style={styles.colSm}>{p.quantita}</Text>
-              <Text style={styles.colSm}>{formatEuro(p.valore)}</Text>
-            </View>
-          ))}
-        </View>
+              
+              <View style={styles.rowImporto}>
+                <Text style={styles.price}>{formatEuro(item.prezzoUnitario)}</Text>
+              </View>
 
-        {/* Analisi Clienti */}
-        <Text style={styles.sectionTitle}>Analisi Clienti</Text>
-        <View style={styles.table}>
-          <View style={styles.tableHeader}>
-            <Text style={styles.colLg}>Ragione Sociale</Text>
-            <Text style={styles.colSm}>Capi</Text>
-            <Text style={styles.colSm}>Fatturato</Text>
+              <View style={styles.rowGriglia}>
+                <View style={styles.matrix}>
+                  {/* Intestazione Taglie */}
+                  <View style={styles.matrixHeader}>
+                    <Text style={[styles.matrixCell, { width: 40, textAlign: 'left', fontWeight: 'bold' }]}>COL.</Text>
+                    {sizes.map(s => (
+                      <Text key={s} style={[styles.matrixCell, styles.matrixColHeader]}>{s}</Text>
+                    ))}
+                    <Text style={[styles.matrixCellLast, styles.matrixColHeader, { width: 30 }]}>ToT.</Text>
+                  </View>
+                  {/* Valori */}
+                  <View style={styles.matrixRow}>
+                    <Text style={[styles.matrixCell, { width: 40, textAlign: 'left', fontSize: 6 }]}>{item.colore}</Text>
+                    {sizes.map(s => (
+                      <Text key={s} style={styles.matrixCell}>{item.taglie[s] || 0}</Text>
+                    ))}
+                    <Text style={[styles.matrixCellLast, styles.matrixTotCell, { width: 30 }]}>{item.totale}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )
+        })}
+
+        {/* Riepilogo Finale */}
+        <View style={styles.summarySection} wrap={false}>
+          <View style={styles.notesBox}>
+            <Text style={styles.infoLabel}>NOTE REPORT</Text>
+            <Text style={[styles.description, { marginTop: 2 }]}>
+              Report Vendite ad uso interno. Elaborato secondo i filtri selezionati.
+            </Text>
           </View>
-          {data.perCliente.sort((a: any, b: any) => b.valore - a.valore).map((c: any, i: number) => (
-            <View key={i} style={styles.tableRow} wrap={false}>
-              <Text style={styles.colLg}>{c.ragioneSociale}</Text>
-              <Text style={styles.colSm}>{c.quantita}</Text>
-              <Text style={styles.colSm}>{formatEuro(c.valore)}</Text>
+          <View style={styles.totalsBox}>
+            <View style={styles.totalRow}>
+              <Text style={styles.infoLabel}>TOTALE VARIANTI</Text>
+              <Text style={styles.infoValue}>{prodotti.length}</Text>
             </View>
-          ))}
+            <View style={styles.totalRow}>
+              <Text style={styles.infoLabel}>TOTALE CAPI</Text>
+              <Text style={styles.infoValue}>{data?.totali?.capi || 0}</Text>
+            </View>
+            <View style={styles.totalFinal}>
+              <Text>FATTURATO NETTO</Text>
+              <Text>{formatEuro(data?.totali?.valore || 0)}</Text>
+            </View>
+          </View>
         </View>
 
-        <Text style={styles.footer} fixed>
-          Documento ad uso interno Horus Srl - Pagina generata automaticamente dal sistema gestionale
+        <Text style={styles.footerNote} fixed>
+          Documento ad uso interno Horus Srl — Report Vendite
         </Text>
+
+        <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
+          `Pagina ${pageNumber} di ${totalPages}`
+        )} fixed />
       </Page>
     </Document>
   )

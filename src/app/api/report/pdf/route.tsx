@@ -49,30 +49,26 @@ export async function GET(request: Request) {
       orderBy: { ordine: { dataOrdine: 'desc' }}
     })
 
-    const aggregazioneProdotto: Record<string, any> = {}
-    const aggregazioneCliente: Record<string, any> = {}
+    // Raggruppamento per Prodotto + Colore (esattamente come negli Ordini)
+    const groupedProducts: Record<string, any> = {}
 
     righe.forEach(r => {
-      const pKey = `${r.sku}-${r.colore}-${r.taglia}`
-      if (!aggregazioneProdotto[pKey]) {
-        aggregazioneProdotto[pKey] = { 
-          sku: r.sku, 
-          colore: r.colore, 
-          taglia: r.taglia, 
-          quantita: 0, 
-          valore: 0,
-          fotoUrl: r.prodotto?.fotoUrl || r.fotoUrl
+      const key = `${r.prodottoId || r.sku}-${r.colore}`
+      if (!groupedProducts[key]) {
+        groupedProducts[key] = {
+          sku: r.sku,
+          descrizione: r.prodotto?.descrizione || r.descrizione || '',
+          prezzoUnitario: r.prezzoUnitario,
+          fotoUrl: r.prodotto?.fotoUrl || r.fotoUrl || null,
+          colore: r.colore,
+          taglie: {} as Record<string, number>,
+          totale: 0,
+          valore: 0
         }
       }
-      aggregazioneProdotto[pKey].quantita += r.quantita
-      aggregazioneProdotto[pKey].valore += r.quantita * r.prezzoUnitario
-
-      const cId = r.ordine.clienteId
-      if (!aggregazioneCliente[cId]) {
-        aggregazioneCliente[cId] = { ragioneSociale: r.ordine.cliente.ragioneSociale, quantita: 0, valore: 0 }
-      }
-      aggregazioneCliente[cId].quantita += r.quantita
-      aggregazioneCliente[cId].valore += r.quantita * r.prezzoUnitario
+      groupedProducts[key].taglie[r.taglia] = (groupedProducts[key].taglie[r.taglia] || 0) + r.quantita
+      groupedProducts[key].totale += r.quantita
+      groupedProducts[key].valore += r.quantita * r.prezzoUnitario
     })
 
     const reportData = {
@@ -80,8 +76,7 @@ export async function GET(request: Request) {
         capi: righe.reduce((s, r) => s + r.quantita, 0),
         valore: righe.reduce((s, r) => s + (r.quantita * r.prezzoUnitario), 0)
       },
-      perProdotto: Object.values(aggregazioneProdotto),
-      perCliente: Object.values(aggregazioneCliente)
+      prodotti: Object.values(groupedProducts)
     }
 
     const filtersRecap = {
