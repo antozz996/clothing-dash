@@ -12,14 +12,18 @@ interface LabelToPrint {
   prezzoUnitario: number
   barcodeValue: string
   copies: number
+  showPrice?: boolean
 }
 
 function EtichetteStampaContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const initialFormat = (searchParams.get('format') as 'roll' | 'a4-3x8' | 'a4-4x10') || 'roll'
+  const paramShowPrice = searchParams.get('showPrice')
+  const initialShowPrice = paramShowPrice !== null ? paramShowPrice !== 'false' : true
   
   const [format, setFormat] = useState<'roll' | 'a4-3x8' | 'a4-4x10'>(initialFormat)
+  const [showPrice, setShowPrice] = useState<boolean>(initialShowPrice)
   const [labels, setLabels] = useState<LabelToPrint[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -28,13 +32,17 @@ function EtichetteStampaContent() {
     const stored = localStorage.getItem('labels-to-print')
     if (stored) {
       try {
-        setLabels(JSON.parse(stored))
+        const parsed: LabelToPrint[] = JSON.parse(stored)
+        setLabels(parsed)
+        if (parsed.length > 0 && typeof parsed[0].showPrice === 'boolean' && paramShowPrice === null) {
+          setShowPrice(parsed[0].showPrice)
+        }
       } catch (e) {
         console.error('Error parsing labels to print:', e)
       }
     }
     setLoading(false)
-  }, [])
+  }, [paramShowPrice])
 
   // Avvia la stampa automatica una volta caricato tutto e se ci sono etichette
   useEffect(() => {
@@ -87,7 +95,8 @@ function EtichetteStampaContent() {
         colore: label.colore,
         taglia: label.taglia,
         prezzoUnitario: label.prezzoUnitario,
-        barcodeValue: label.barcodeValue
+        barcodeValue: label.barcodeValue,
+        showPrice: label.showPrice
       })
     }
   })
@@ -126,18 +135,32 @@ function EtichetteStampaContent() {
           </div>
         </div>
 
-        {/* Formato Switcher */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-bold text-slate-400 uppercase">Layout:</span>
-          <select 
-            value={format}
-            onChange={(e: any) => setFormat(e.target.value)}
-            className="px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 focus:outline-none"
+        {/* Controls: Formato Switcher & Mostra Prezzi */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold text-slate-400 uppercase">Layout:</span>
+            <select 
+              value={format}
+              onChange={(e: any) => setFormat(e.target.value)}
+              className="px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 focus:outline-none"
+            >
+              <option value="roll">Rotolo Termico</option>
+              <option value="a4-3x8">A4 (3x8 - 24pz)</option>
+              <option value="a4-4x10">A4 (4x10 - 40pz)</option>
+            </select>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowPrice(prev => !prev)}
+            className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors border ${
+              showPrice 
+                ? 'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100' 
+                : 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200'
+            }`}
           >
-            <option value="roll">Rotolo Termico</option>
-            <option value="a4-3x8">A4 (3x8 - 24pz)</option>
-            <option value="a4-4x10">A4 (4x10 - 40pz)</option>
-          </select>
+            Prezzi: {showPrice ? 'Visibili' : 'Nascosti'}
+          </button>
         </div>
 
         {/* Stampa Button */}
@@ -168,6 +191,7 @@ function EtichetteStampaContent() {
                     taglia={label.taglia}
                     prezzoUnitario={label.prezzoUnitario}
                     barcodeValue={label.barcodeValue}
+                    showPrice={showPrice}
                   />
                 </div>
               </div>
@@ -198,6 +222,7 @@ function EtichetteStampaContent() {
                         taglia={label.taglia}
                         prezzoUnitario={label.prezzoUnitario}
                         barcodeValue={label.barcodeValue}
+                        showPrice={showPrice}
                       />
                     </div>
                   </div>
@@ -230,6 +255,7 @@ function EtichetteStampaContent() {
                         taglia={label.taglia}
                         prezzoUnitario={label.prezzoUnitario}
                         barcodeValue={label.barcodeValue}
+                        showPrice={showPrice}
                       />
                     </div>
                   </div>

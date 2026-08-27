@@ -38,6 +38,7 @@ export default function LabelPrintModal({ isOpen, onClose, items }: LabelPrintMo
   const [quantities, setQuantities] = useState<Record<string, number>>({})
   const [format, setFormat] = useState<'roll' | 'a4-3x8' | 'a4-4x10'>('roll')
   const [barcodeMode, setBarcodeMode] = useState<'generated' | 'sku'>('generated')
+  const [showPrice, setShowPrice] = useState<boolean>(true)
 
   // Inizializza le selezioni e le quantità quando cambiano gli articoli del report
   useEffect(() => {
@@ -111,7 +112,8 @@ export default function LabelPrintModal({ isOpen, onClose, items }: LabelPrintMo
           taglia: item.taglia,
           prezzoUnitario: price,
           barcodeValue: barcodeVal,
-          copies: qty
+          copies: qty,
+          showPrice: showPrice
         }
       })
 
@@ -124,7 +126,7 @@ export default function LabelPrintModal({ isOpen, onClose, items }: LabelPrintMo
     localStorage.setItem('labels-to-print', JSON.stringify(labelsToPrint))
     
     // Apri la pagina di stampa in una nuova scheda
-    window.open(`/report/etichette?format=${format}`, '_blank')
+    window.open(`/report/etichette?format=${format}&showPrice=${showPrice}`, '_blank')
   }
 
   return (
@@ -282,6 +284,29 @@ export default function LabelPrintModal({ isOpen, onClose, items }: LabelPrintMo
                     <option value="sku">SKU Diretto (es. SSH26038)</option>
                   </select>
                 </div>
+
+                {/* Mostra Prezzo Toggle */}
+                <div className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl">
+                  <div>
+                    <div className="text-xs font-bold text-slate-700">Mostra Prezzo</div>
+                    <div className="text-[10px] text-slate-400 font-medium">Includi o nascondi il prezzo sulle etichette</div>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={showPrice}
+                    onClick={() => setShowPrice(!showPrice)}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${
+                      showPrice ? 'bg-indigo-600' : 'bg-slate-300'
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                        showPrice ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
 
               {/* Live Preview */}
@@ -295,6 +320,7 @@ export default function LabelPrintModal({ isOpen, onClose, items }: LabelPrintMo
                       taglia={previewItem.taglia}
                       prezzoUnitario={previewItem.prezzoUnitario || (previewItem.valore / (previewItem.quantita || 1)) || 0}
                       barcodeValue={barcodeMode === 'sku' ? previewItem.sku : generateBarcodeValue(previewItem.sku, previewItem.colore, previewItem.taglia)}
+                      showPrice={showPrice}
                     />
                   </div>
                 ) : (

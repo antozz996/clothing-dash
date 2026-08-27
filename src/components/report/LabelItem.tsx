@@ -9,6 +9,7 @@ interface LabelItemProps {
   taglia: string
   prezzoUnitario: number
   barcodeValue: string
+  showPrice?: boolean
 }
 
 export default function LabelItem({
@@ -16,7 +17,8 @@ export default function LabelItem({
   colore,
   taglia,
   prezzoUnitario,
-  barcodeValue
+  barcodeValue,
+  showPrice = true
 }: LabelItemProps) {
   // Formatta il prezzo per assomigliare alla foto (es. 365.0)
   const formattedPrice = prezzoUnitario.toFixed(1)
@@ -36,14 +38,16 @@ export default function LabelItem({
       </div>
 
       {/* Taglia e Prezzo */}
-      <div className="border-b border-slate-300 grid grid-cols-2 text-[11px] font-bold text-slate-800">
-        <div className="py-0.5 border-r border-slate-300 pr-2">
+      <div className={`border-b border-slate-300 text-[11px] font-bold text-slate-800 ${showPrice ? 'grid grid-cols-2' : 'flex'}`}>
+        <div className={`py-0.5 ${showPrice ? 'border-r border-slate-300 pr-2' : 'w-full'}`}>
           Size: <span className="ml-1">{taglia}</span>
         </div>
-        <div className="py-0.5 pl-2 flex justify-between">
-          <span>Price</span>
-          <span className="font-extrabold">{formattedPrice}</span>
-        </div>
+        {showPrice && (
+          <div className="py-0.5 pl-2 flex justify-between">
+            <span>Price</span>
+            <span className="font-extrabold">{formattedPrice}</span>
+          </div>
+        )}
       </div>
 
       {/* Barcode */}
